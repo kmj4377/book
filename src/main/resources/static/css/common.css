@@ -1,0 +1,156 @@
+@charset "UTF-8";
+
+/* ------------------------------
+    📌 공통 폰트
+------------------------------ */
+@font-face {
+    font-family: 'SchoolSafetyWing';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2511-1@1.0/HakgyoansimNalgaeR.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+/* ------------------------------
+    📌 전체 배경, 텍스트
+------------------------------ */
+body {
+    font-family: 'SchoolSafetyWing', sans-serif;
+    background-color: #b38b6d;
+    color: #3b2a1f;
+    margin: 0;
+}
+
+/* ------------------------------
+    📌 상단 바 (선 제거)
+------------------------------ */
+.top-bar,
+.navbar,
+header {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* ------------------------------
+    📌 좌측 메뉴바 (선 제거)
+------------------------------ */
+.w-64 {
+    background-color: #c19077 !important;
+    height: 100vh;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.w-64 * {
+    color: #2d1b0f !important;
+}
+
+/* 좌측 메뉴 경계선 제거 */
+.sidebar,
+.menu,
+.menu * {
+    border: none !important;
+}
+
+/* ------------------------------
+    📌 메뉴 링크
+------------------------------ */
+.menu li a {
+    display: block;
+    padding: 12px 0;
+    text-align: center;
+    color: #2d1b0f !important;
+    font-size: 20px;
+    border: none !important;
+}
+
+.menu li a:hover {
+    background-color: #d9b59a !important;
+}
+
+/* ------------------------------
+    📌 Input 박스 색상 통일
+------------------------------ */
+input,
+select,
+textarea {
+    background-color: #f2d5b5 !important;  
+    border: 1px solid #b99577 !important;
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
+    color: #3b2a1f !important;
+}
+
+input:focus {
+    background-color: #f7e6cf !important;
+    border-color: #8d5f3a !important;
+}
+
+/* ------------------------------
+    📌 버튼 (가입 / 뒤로가기 포함)
+------------------------------ */
+button,
+.btn {
+    background-color: #f2d5b5 !important; /* input과 색 통일 */
+    border: 1px solid #b99577 !important;
+    color: #3b2a1f !important;
+    padding: 10px 16px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+button:hover,
+.btn:hover {
+    background-color: #e8c8a8 !important;
+}
+
+/* outline 버튼도 통일 */
+.btn-outline {
+    background-color: #f2d5b5 !important;
+    border: 1px solid #b99577 !important;
+    color: #3b2a1f !important;
+}
+
+.btn-outline:hover {
+    background-color: #e8c8a8 !important;
+}
+
+/* ------------------------------
+    📌 뒤로가기 영역 색도 통일
+------------------------------ */
+.bg-white {
+    background-color: #b38b6d !important;  
+    border-radius: 10px;
+}
+
+/* ------------------------------
+    📌 fieldset (박스 테두리 제거)
+------------------------------ */
+.fieldset {
+    border: none !important;
+    background: transparent !important;
+}
+
+#backBtn {
+    width: 150px;
+    height: 45px;
+    font-size: 18px;
+    border-radius: 10px;
+    background-color: #f2d5b5 !important; 
+    border: none !important;
+    color: #000;
+}
+
+/* hover 효과(선택사항) */
+#backBtn:hover {
+    opacity: 0.9;
+}
+
+.btn-join {
+    padding-top: 14px !important;   /* 위아래 여백 늘려서 키우기 */
+    padding-bottom: 14px !important;
+    font-size: 17px !important;     /* 글자 크기 조금 키움 */
+    border-radius: 10px !important; /* 모서리 둥글게(선택사항) */
+}
+
+

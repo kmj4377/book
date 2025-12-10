@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: demo
+
+  mvc:
+    view:
+      prefix: /view/
+      suffix: .jsp
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/BOOK
+    username: root
+    password:
+
+server:
+  port: 8081
+
+gemini:
+  api-key: ${GEMINI_API_KEY}
+  url: https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${gemini.api-key}
+
+kakao:
+  rest-api-key: ${KAKAO_REST_API_KEY}
+  client-secret: ${KAKAO_CLIENT_SECRET}
+  redirect-uri: http://localhost:8081/usr/member/kakao/callback
+
+naver:
+  client-id: ${NAVER_CLIENT_ID}
+  client-secret: ${NAVER_CLIENT_SECRET}
+  redirect-uri: http://localhost:8081/usr/member/naverLoginCallback
+
+google:
+  client-id: ${GOOGLE_CLIENT_ID}
+  client-secret: ${GOOGLE_CLIENT_SECRET}
+  redirect-uri: http://localhost:8081/usr/member/google/callback
