@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
@@ -50,49 +52,75 @@ public class UsrMemberController {
         return "usr/member/join";
     }
 
-    // ------------------ 회원가입 처리 ------------------
+    // ------------------ 이메일 인증코드 발송 ------------------
+    @PostMapping("/sendEmailAuthCode")
+    @ResponseBody
+    public ResultData sendEmailAuthCode(String email) {
+        return memberService.sendEmailAuthCode(email);
+    }
+
+    // ------------------ 이메일 인증코드 확인 ------------------
+    @PostMapping("/checkEmailAuthCode")
+    @ResponseBody
+    public ResultData checkEmailAuthCode(String email, String code) {
+        return memberService.checkEmailAuthCode(email, code);
+    }
+
+    // ------------------ 회원가입 처리 (alert.jsp 없이 JS 방식으로 되돌림) ------------------
     @PostMapping("/doJoin")
     @ResponseBody
     public String doJoin(String loginId, String loginPw, String loginPwChk,
-                         String name, String nickname) {
+                         String name, String nickname, String email,
+                         String emailAuthed) {
 
         if (!loginPw.equals(loginPwChk)) {
             return req.jsHistoryBack("비밀번호 확인이 일치하지 않습니다.");
         }
 
-        try {
-            memberService.joinMember(loginId, loginPw, name, nickname);
-        } catch (IllegalArgumentException e) {
-            return req.jsHistoryBack(e.getMessage());
+        if (!"1".equals(emailAuthed)) {
+            return req.jsHistoryBack("이메일 인증을 완료해주세요.");
         }
+
+        memberService.joinMember(loginId, loginPw, name, nickname, email);
 
         return req.jsReplace(loginId + "님의 가입이 완료되었습니다.", "/usr/member/login");
     }
 
     // ------------------ 로그인 페이지 ------------------
     @GetMapping("/login")
-    public String login(Model model) {
+    public String login(Model model, HttpSession session) {
 
-        // 카카오 로그인 URL 데이터 전달
         String kakaoRestKey = System.getenv("KAKAO_REST_API_KEY");
         String kakaoRedirectUri = "http://localhost:8081/usr/member/kakao/callback";
-        model.addAttribute("kakaoRestKey", kakaoRestKey);
-        model.addAttribute("kakaoRedirectUri", kakaoRedirectUri);
 
-        // 네이버 로그인 URL 전달
+        String kakaoLoginUrl =
+                "https://kauth.kakao.com/oauth/authorize"
+                        + "?client_id=" + kakaoRestKey
+                        + "&redirect_uri=" + kakaoRedirectUri
+                        + "&response_type=code"
+                        + "&prompt=login";
+
+        model.addAttribute("kakaoLoginUrl", kakaoLoginUrl);
+
         String naverClientId = System.getenv("NAVER_CLIENT_ID");
         String naverRedirectUri = "http://localhost:8081/usr/member/naver/callback";
-        String state = "NAVER_LOGIN_STATE";
+
+        String state = "NAVER_LOGIN_" + System.currentTimeMillis();
+        session.setAttribute("naverState", state);
+
+        String encodedRedirectUri = URLEncoder.encode(naverRedirectUri, StandardCharsets.UTF_8);
 
         String naverLoginUrl =
-                "https://nid.naver.com/oauth2.0/authorize?response_type=code"
+                "https://nid.naver.com/oauth2.0/authorize"
+                        + "?response_type=code"
                         + "&client_id=" + naverClientId
-                        + "&redirect_uri=" + naverRedirectUri
-                        + "&state=" + state;
+                        + "&redirect_uri=" + encodedRedirectUri
+                        + "&state=" + state
+                        + "&auth_type=reprompt"; 
 
         model.addAttribute("naverLoginUrl", naverLoginUrl);
 
-        // 구글 로그인 URL 전달
+        // ⭐ 구글 로그인 URL
         String googleClientId = System.getenv("GOOGLE_CLIENT_ID");
         String googleRedirectUri = "http://localhost:8081/usr/member/google/callback";
 
@@ -139,7 +167,10 @@ public class UsrMemberController {
 
         req.logout();
 
-        // 카카오 로그아웃 처리
+        if (loginedMember.getNaverId() != null) {
+            return "redirect:https://nid.naver.com/nidlogin.logout";
+        }
+
         if (loginedMember.getKakaoId() != null) {
             String clientId = System.getenv("KAKAO_REST_API_KEY");
             String logoutRedirectUri = "http://localhost:8081/usr/member/logoutComplete";
@@ -174,6 +205,7 @@ public class UsrMemberController {
             return "redirect:/usr/home/main";
 
         } catch (Exception e) {
+            e.printStackTrace();
             return "redirect:/usr/member/login?msg=kakao-login-failed";
         }
     }
@@ -183,9 +215,14 @@ public class UsrMemberController {
     public String naverCallback(@RequestParam String code,
                                 @RequestParam String state,
                                 HttpSession session) {
-        try {
-            Map<String, Object> naverUser = naverService.getNaverUser(code, state);
 
+        try {
+            String sessionState = (String) session.getAttribute("naverState");
+            if (sessionState == null || !sessionState.equals(state)) {
+                return "redirect:/usr/member/login?msg=naver-state-mismatch";
+            }
+
+            Map<String, Object> naverUser = naverService.getNaverUser(code, state);
             LoginedMember loginedMember = memberService.loginOrJoinNaver(naverUser);
 
             req.login(loginedMember);
@@ -194,6 +231,7 @@ public class UsrMemberController {
             return "redirect:/usr/home/main";
 
         } catch (Exception e) {
+            e.printStackTrace();
             return "redirect:/usr/member/login?msg=naver-login-failed";
         }
     }

@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -69,18 +70,27 @@ public class NaverService {
             throw new RuntimeException("네이버 사용자 정보 조회 실패");
         }
 
-        return (Map<String, Object>) response.getBody().get("response");
+        // ⭐ response 내부가 실제 사용자 정보
+        Map<String, Object> user = (Map<String, Object>) response.getBody().get("response");
+
+        System.out.println("네이버 사용자 데이터 = " + user); // 디버깅용
+
+        return user;
     }
 
     // -------------------------------
-    // 🔹 3) (옵션) 통합 메서드 — 한번에 사용자 정보 가져오기
+    // 🔹 3) Controller에서 직접 쓰기 위한 통합 메서드
     // -------------------------------
     public Map<String, Object> getNaverUser(String code, String state) {
+
         String accessToken = getAccessToken(code, state);
-        return getUserInfo(accessToken);
+        Map<String, Object> userInfo = getUserInfo(accessToken);
+
+        // ⭐ Controller에서는 userInfo만 반환하는 것이 핵심.
+        //   MemberService가 그대로 name, email 등을 get() 할 수 있게.
+        return userInfo;
     }
 
-    // Getter (원하면 컨트롤러에서 로그인 URL 만들 때 사용)
     public String getClientId() {
         return clientId;
     }

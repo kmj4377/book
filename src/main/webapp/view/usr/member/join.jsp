@@ -1,83 +1,182 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <c:set var="pageTitle" value="회원가입"/>
-
 <%@ include file="/view/usr/common/header.jsp" %>
+
+<style>
+    body { margin: 0; padding: 0; }
+    .join-wrapper {
+        width: 100%;
+        height: calc(100vh - 80px);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 40px;
+        box-sizing: border-box;
+    }
+    .join-card {
+        width: 600px;
+        background: #f5e9d3;
+        padding: 35px 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    }
+    .join-title { font-size: 22px; font-weight: bold; margin-bottom: 18px; }
+    .input-row { margin-bottom: 14px; }
+</style>
 
 <script>
 	let validLoginId = null;
 
-	// --------------------- 회원가입 submit ---------------------
-	const joinFormSubmit = function(form) {
+	/* -----------------------------------
+	   🔥 5분 타이머 
+	----------------------------------- */
+	let timerInterval = null;
+	let timeLeft = 300; 
 
-		$('#pwMsg').text('');
-		$('#pwChkMsg').text('');
-        $('#nameMsg').text('');
-        $('#nicknameMsg').text('');
+	function startEmailTimer() {
+	    timeLeft = 300;
 
-		form.loginId.value = form.loginId.value.trim();
-		form.loginPw.value = form.loginPw.value.trim();
-		form.loginPwChk.value = form.loginPwChk.value.trim();
-		form.name.value = form.name.value.trim();
-		form.nickname.value = form.nickname.value.trim();
+	    if (timerInterval !== null) clearInterval(timerInterval);
 
-		// (1) 아이디 필수
-        if (form.loginId.value.length === 0) {
-            $('#chkMsg').removeClass('text-green-500').addClass('text-red-500');
-            $('#chkMsg').text('아이디는 필수 입력 정보입니다.');
-            form.loginId.focus();
-            return false;
-        }
+	    timerInterval = setInterval(function () {
 
-        // (2) 아이디 중복 검사 여부
-        if (form.loginId.value !== validLoginId) {
-            loginIdDupChk(form.loginId);
-            return false;
-        }
+	        if (timeLeft <= 0) {
+	            clearInterval(timerInterval);
+	            timerInterval = null;
 
-		// (3) 비밀번호 필수
-		if (form.loginPw.value.length === 0) {
-			$('#pwMsg').text('비밀번호는 필수 입력 정보입니다.');
-			form.loginPw.focus();
-			return false;
-		}
+	            $('#emailTimerMsg')
+	                .css('color', 'red')
+	                .text("인증코드가 만료되었습니다. 다시 발송해주세요.");
 
-		// (4) 비밀번호 확인
-		if (form.loginPw.value !== form.loginPwChk.value) {
-			$('#pwChkMsg').text('비밀번호가 일치하지 않습니다.');
-			form.loginPw.value = '';
-			form.loginPwChk.value = '';
-			form.loginPw.focus();
-			return false;
-		}
+	            $('#emailAuthed').val("0");
+	            return;
+	        }
 
-		// (5) 이름 필수
-		if (form.name.value.length === 0) {
-			$('#nameMsg').text('이름은 필수 입력 정보입니다.');
-			form.name.focus();
-			return false;
-		}
+	        let min = Math.floor(timeLeft / 60);
+	        let sec = timeLeft % 60;
 
-		// (6) 닉네임 필수
-		if (form.nickname.value.length === 0) {
-			$('#nicknameMsg').text('닉네임은 필수 입력 정보입니다.');
-			form.nickname.focus();
-			return false;
-		}
+	        $('#emailTimerMsg')
+	            .css('color', 'green')
+	            .text("남은 시간: " +
+	                    String(min).padStart(2, '0') +
+	                    "분 " +
+	                    String(sec).padStart(2, '0') +
+	                    "초");
 
-		return true;
+	        timeLeft--;
+
+	    }, 1000);
 	}
 
-	// --------------------- 아이디 중복 검사 ---------------------
+	/* -----------------------------------
+	   이메일 인증코드 발송
+	----------------------------------- */
+	function sendEmailCode() {
+	    let email = $('input[name=email]').val().trim();
+
+	    if (email.length === 0) {
+	        $('#emailTimerMsg').css("color", "red").text('이메일을 입력해주세요.');
+	        return;
+	    }
+
+	    $('#emailTimerMsg').css("color", "black").text('인증코드 발송 중...');
+
+	    $.ajax({
+	        url: '/usr/member/sendEmailAuthCode',
+	        type: 'post',
+	        data: { email: email },
+	        success: function(data) {
+
+	            if (!data.rsCode.startsWith("S")) {
+	                $('#emailTimerMsg').css("color", "red").text(data.rsMsg);
+	                return;
+	            }
+
+	            $('#emailCodeBox').show();
+	            $('#emailAuthed').val("0");
+
+	            $('#emailTimerMsg').css('color', 'green').text('남은 시간: 05분 00초');
+	            startEmailTimer();
+	        },
+	        error: function() {
+	            $('#emailTimerMsg').text('서버 오류가 발생했습니다.');
+	        }
+	    });
+	}
+
+	/* -----------------------------------
+	   이메일 인증 코드 확인
+	----------------------------------- */
+	function checkEmailCode() {
+	    let email = $('input[name=email]').val().trim();
+	    let code = $('#emailCode').val().trim();
+
+	    if (code.length === 0) {
+	        $('#emailTimerMsg')
+	            .css("color", "red")
+	            .text("인증코드를 입력해주세요.");
+	        return;
+	    }
+
+	    $.ajax({
+	        url: '/usr/member/checkEmailAuthCode',
+	        type: 'post',
+	        data: { email: email, code: code },
+	        success: function(data) {
+
+	            /* ⭐ 서버 응답 구조
+	               S-1 → 성공
+	               F-1 / F-2 / F-3 → 실패 (메시지 포함)
+	            */
+
+	            if (data.rsCode.startsWith("S")) {
+
+	                clearInterval(timerInterval);
+	                timerInterval = null;
+
+	                $('#emailTimerMsg')
+	                    .css("color","green")
+	                    .text("이메일 인증이 완료되었습니다.");
+
+	                $('#emailAuthed').val("1");
+	                return;
+	            }
+
+	            // 실패 처리
+	            $('#emailTimerMsg')
+	                .css("color","red")
+	                .text(data.rsMsg);
+
+	            // 2초 후 타이머로 복귀
+	            setTimeout(() => {
+	                if (timerInterval !== null) {
+	                    let min = Math.floor(timeLeft / 60);
+	                    let sec = timeLeft % 60;
+
+	                    $('#emailTimerMsg')
+	                        .css("color","green")
+	                        .text("남은 시간: "
+	                            + String(min).padStart(2, '0')
+	                            + "분 "
+	                            + String(sec).padStart(2, '0')
+	                            + "초");
+	                }
+	            }, 2000);
+	        }
+	    });
+	}
+
+	/* -----------------------------------
+	   아이디 중복 검사
+	----------------------------------- */
 	const loginIdDupChk = function(el) {
 		let chkMsg = $('#chkMsg');
 		el.value = el.value.trim();
 
 		if (el.value.length === 0) {
-			chkMsg.removeClass('text-green-500').addClass('text-red-500');
-			chkMsg.text('아이디는 필수 입력 정보입니다.');
+			chkMsg.addClass('text-red-500').text('아이디는 필수 입력 정보입니다.');
 			validLoginId = null;
 			return;
 		}
@@ -88,12 +187,6 @@
 			data: { loginId: el.value },
 			dataType: 'json',
 			success: function(data) {
-
-                if (!data || !data.rsCode) {
-                    chkMsg.addClass("text-red-500")
-                         .text("서버 오류: 응답 형식이 잘못되었습니다.");
-                    return;
-                }
 
 				if (data.rsCode.startsWith("S")) {
 					chkMsg.removeClass('text-red-500').addClass('text-green-500');
@@ -107,83 +200,153 @@
 			}
 		});
 	}
+
+	/* -----------------------------------
+	   회원가입 제출
+	----------------------------------- */
+	const joinFormSubmit = function(form) {
+
+		$('#pwMsg').text('');
+		$('#pwChkMsg').text('');
+		$('#nameMsg').text('');
+		$('#nicknameMsg').text('');
+		$('#emailTimerMsg').text('');
+
+		form.loginId.value = form.loginId.value.trim();
+		form.loginPw.value = form.loginPw.value.trim();
+		form.loginPwChk.value = form.loginPwChk.value.trim();
+		form.name.value = form.name.value.trim();
+		form.nickname.value = form.nickname.value.trim();
+		form.email.value = form.email.value.trim();
+
+		if (form.loginId.value.length === 0) {
+			$('#chkMsg').text('아이디는 필수 입력 정보입니다.');
+			return false;
+		}
+
+		if (form.loginId.value !== validLoginId) {
+			loginIdDupChk(form.loginId);
+			return false;
+		}
+
+		if (form.loginPw.value.length === 0) {
+			$('#pwMsg').text('비밀번호는 필수 입력 정보입니다.');
+			return false;
+		}
+
+		if (form.loginPw.value !== form.loginPwChk.value) {
+			$('#pwChkMsg').text('비밀번호가 일치하지 않습니다.');
+			return false;
+		}
+
+		if (form.name.value.length === 0) {
+			$('#nameMsg').text('이름은 필수 입력 정보입니다.');
+			return false;
+		}
+
+		if (form.nickname.value.length === 0) {
+			$('#nicknameMsg').text('닉네임은 필수 입력 정보입니다.');
+			return false;
+		}
+
+		if (form.email.value.length === 0) {
+			$('#emailTimerMsg').text('이메일은 필수 입력 정보입니다.');
+			return false;
+		}
+
+		if ($('#emailAuthed').val() !== '1') {
+			$('#emailTimerMsg').css("color","red").text('이메일 인증을 완료해주세요.');
+			return false;
+		}
+
+		return true;
+	}
 </script>
 
-<section class="mt-8">
-	<div class="container mx-auto">
 
-		<form action="/usr/member/doJoin" method="post" onsubmit="return joinFormSubmit(this);">
-			<div class="table-box">
-				<table class="table">
+<div class="join-wrapper">
+<div class="join-card">
 
-					<!-- 아이디 -->
-					<tr>
-						<th>아이디</th>
-						<td>
-							<input class="input input-neutral" name="loginId" type="text"
-								   onblur="loginIdDupChk(this);" />
-							<div id="chkMsg" class="mt-2 text-sm h-5"></div>
-						</td>
-					</tr>
+    <div class="join-title">회원가입</div>
 
-					<!-- 비밀번호 -->
-					<tr>
-						<th>비밀번호</th>
-						<td>
-							<input class="input input-neutral" name="loginPw" type="password" />
-							<div id="pwMsg" class="text-red-500 text-sm h-5 mt-1"></div>
-						</td>
-					</tr>
+    <form action="/usr/member/doJoin" method="post" onsubmit="return joinFormSubmit(this);">
 
-					<!-- 비밀번호 확인 -->
-					<tr>
-						<th>비밀번호 확인</th>
-						<td>
-							<input class="input input-neutral" name="loginPwChk" type="password" />
-							<div id="pwChkMsg" class="text-red-500 text-sm h-5 mt-1"></div>
-						</td>
-					</tr>
+        <!-- 아이디 -->
+        <div class="input-row">
+            <label>아이디</label>
+            <input class="input input-neutral w-full"
+                   name="loginId"
+                   type="text"
+                   onblur="loginIdDupChk(this);" />
+            <div id="chkMsg" class="text-red-500 text-sm mt-1"></div>
+        </div>
 
-					<!-- 이름 -->
-					<tr>
-						<th>이름</th>
-						<td>
-							<input class="input input-neutral" name="name" type="text" />
-							<div id="nameMsg" class="text-red-500 text-sm h-5 mt-1"></div>
-						</td>
-					</tr>
+        <!-- 비밀번호 -->
+        <div class="input-row">
+            <label>비밀번호</label>
+            <input class="input input-neutral w-full" name="loginPw" type="password" />
+            <div id="pwMsg" class="text-red-500 text-sm mt-1"></div>
+        </div>
 
-					<!-- 닉네임 -->
-					<tr>
-						<th>닉네임</th>
-						<td>
-							<input class="input input-neutral" name="nickname" type="text" />
-							<div id="nicknameMsg" class="text-red-500 text-sm h-5 mt-1"></div>
-						</td>
-					</tr>
+        <!-- 비밀번호 확인 -->
+        <div class="input-row">
+            <label>비밀번호 확인</label>
+            <input class="input input-neutral w-full" name="loginPwChk" type="password" />
+            <div id="pwChkMsg" class="text-red-500 text-sm mt-1"></div>
+        </div>
 
-					<!-- 가입 버튼 -->
-					<tr>
-						<td colspan="2">
-							<button class="btn btn-neutral btn-outline btn-wide btn-join">가입</button>
+        <!-- 이름 -->
+        <div class="input-row">
+            <label>이름</label>
+            <input class="input input-neutral w-full" name="name" type="text" />
+            <div id="nameMsg" class="text-red-500 text-sm mt-1"></div>
+        </div>
 
-						</td>
-					</tr>
+        <!-- 닉네임 -->
+        <div class="input-row">
+            <label>닉네임</label>
+            <input class="input input-neutral w-full" name="nickname" type="text" />
+            <div id="nicknameMsg" class="text-red-500 text-sm mt-1"></div>
+        </div>
 
-				</table>
-			</div>
-		</form>
+        <!-- 이메일 -->
+        <div class="input-row">
+            <label>이메일</label>
 
-		<div class="bg-white p-6">
-		    <button id="backBtn"
-		            class="btn btn-neutral btn-outline"
-		            onclick="location.href='/usr/welcome/index';">
-		        뒤로가기
-		    </button>
-		</div>
+            <div class="flex gap-2">
+                <input class="input input-neutral flex-1"
+                       name="email"
+                       type="text"
+                       placeholder="example@gmail.com">
 
+                <button type="button" class="btn btn-neutral btn-sm"
+                        onclick="sendEmailCode()">인증코드 발송</button>
+            </div>
 
-	</div>
-</section>
+            <!-- 인증코드 입력 -->
+            <div id="emailCodeBox" class="mt-2 flex gap-2" style="display:none;">
+                <input id="emailCode" class="input input-neutral flex-1"
+                       type="text" placeholder="인증코드 입력" />
+                <button type="button" class="btn btn-neutral btn-sm"
+                        onclick="checkEmailCode()">확인</button>
+            </div>
+
+            <div id="emailTimerMsg" class="text-red-500 text-sm mt-2"></div>
+        </div>
+
+        <input type="hidden" id="emailAuthed" name="emailAuthed" value="0">
+
+        <!-- 가입 버튼 -->
+        <button class="btn btn-neutral btn-wide mt-4">가입</button>
+    </form>
+
+    <!-- 뒤로가기 -->
+    <button class="btn btn-neutral btn-outline w-full mt-4"
+            onclick="location.href='/usr/welcome/index';">
+        뒤로가기
+    </button>
+
+</div>
+</div>
 
 <%@ include file="/view/usr/common/footer.jsp" %>

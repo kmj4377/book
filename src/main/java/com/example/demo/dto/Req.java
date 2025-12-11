@@ -17,7 +17,6 @@ public class Req {
     private final HttpServletResponse resp;
     private final HttpSession session;
 
-    // 세션에서 항상 가져오도록 변경
     public LoginedMember getLoginedMember() {
         return (LoginedMember) session.getAttribute("loginedMember");
     }
@@ -46,23 +45,37 @@ public class Req {
         session.invalidate();
     }
 
+    // 🔥 alert 제거 버전: 메시지는 콘솔에만 출력
     public String jsReplace(String msg, String uri) {
+
+        String safeMsg = msg == null ? "" : msg.replace("'", "\\'");
+        String safeUri = uri == null ? "/" : uri;
+
         return """
                 <script>
-                    alert('%s');
+                    const _msg = '%s';
+                    if (_msg && _msg.length > 0) alert(_msg);
                     location.replace('%s');
                 </script>
-                """.formatted(msg, uri);
+                """.formatted(safeMsg, safeUri);
     }
 
+
     public String jsHistoryBack(String msg) {
+
+        String safeMsg = msg == null ? "" : msg.replace("'", "\\'");
+
         return """
                 <script>
-                    alert('%s');
+                    const _msg = '%s';
+                    if (_msg && _msg.length > 0) alert(_msg);
                     history.back();
                 </script>
-                """.formatted(msg);
+                """.formatted(safeMsg);
     }
+
+
+
 
     public String getParam(String name) {
         return req.getParameter(name);

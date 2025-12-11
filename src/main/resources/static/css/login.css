@@ -130,6 +130,10 @@
 }
 
 
+.social-btn {
+    display: block;
+    margin: 16px 0; /* 위아래 10px 간격 */
+}
 
 
 

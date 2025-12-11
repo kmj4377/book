@@ -33,7 +33,7 @@ public interface MemberDao {
     """)
     Member getMemberById(int id);
 
- // -------------------- 일반 회원 가입 --------------------
+    // -------------------- 일반 회원 가입 --------------------
     @Insert("""
         INSERT INTO member
         SET regDate = NOW(),
@@ -42,10 +42,18 @@ public interface MemberDao {
             loginPw = #{loginPw},
             name = #{name},
             nickname = #{nickname},
+            email = #{email},
             authLevel = 1
     """)
-    void joinMember(String loginId, String loginPw, String name, String nickname);
+    void joinMember(String loginId, String loginPw, String name, String nickname, String email);
 
+    // -------------------- 이메일 사용 횟수 조회 (⭐ 신규 추가)
+    @Select("""
+        SELECT COUNT(*)
+        FROM member
+        WHERE email = #{email}
+    """)
+    int getCountByEmail(String email);
 
     // -------------------- 카카오 로그인 --------------------
     @Select("""
@@ -63,10 +71,11 @@ public interface MemberDao {
             loginPw = NULL,
             name = #{name},
             nickname = #{nickname},
+            email = #{email},
             kakao_id = #{kakaoId},
             authLevel = 1
     """)
-    void joinKakaoMember(String loginId, String name, String nickname, Long kakaoId);
+    void joinKakaoMember(String loginId, String name, String nickname, String email, Long kakaoId);
 
     // -------------------- 네이버 로그인 --------------------
     @Select("""
@@ -77,18 +86,18 @@ public interface MemberDao {
     Member getMemberByNaverId(String naverId);
 
     @Insert("""
-    	    INSERT INTO member
-    	    SET regDate = NOW(),
-    	        updateDate = NOW(),
-    	        loginId = #{loginId},
-    	        loginPw = #{loginPw},
-    	        name = #{name},
-    	        nickname = #{nickname},
-    	        naver_id = #{naverId},
-    	        authLevel = 1
-    	""")
-    	void insertNaverMember(String loginId, String loginPw, String name, String nickname, String naverId);
-
+        INSERT INTO member
+        SET regDate = NOW(),
+            updateDate = NOW(),
+            loginId = #{loginId},
+            loginPw = NULL,
+            name = #{name},
+            nickname = #{nickname},
+            email = #{email},
+            naver_id = #{naverId},
+            authLevel = 1
+    """)
+    void insertNaverMember(String loginId, String name, String nickname, String email, String naverId);
 
     // -------------------- 구글 로그인 --------------------
     @Select("""
@@ -99,16 +108,16 @@ public interface MemberDao {
     Member getMemberByGoogleId(String googleId);
 
     @Insert("""
-    	    INSERT INTO member
-    	    SET regDate = NOW(),
-    	        updateDate = NOW(),
-    	        loginId = #{loginId},
-    	        loginPw = #{loginPw},
-    	        name = #{name},
-    	        nickname = #{nickname},
-    	        google_id = #{googleId},
-    	        authLevel = 1
-    	""")
-    	void insertGoogleMember(String loginId, String loginPw, String name, String nickname, String googleId);
-
+        INSERT INTO member
+        SET regDate = NOW(),
+            updateDate = NOW(),
+            loginId = #{loginId},
+            loginPw = NULL,
+            name = #{name},
+            nickname = #{nickname},
+            email = #{email},
+            google_id = #{googleId},
+            authLevel = 1
+    """)
+    void insertGoogleMember(String loginId, String name, String nickname, String email, String googleId);
 }

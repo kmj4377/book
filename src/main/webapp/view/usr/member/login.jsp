@@ -53,35 +53,16 @@
             </fieldset>
         </form>
 
-        <!-- 카카오 로그인 -->
-        <div class="kakao-btn-wrapper mt-3">
-            <a id="kakaoLoginBtn" href="#">
-                <img src="/img/kakao_login.png" alt="카카오 로그인">
-            </a>
-        </div>
-
-        <script>
-        document.getElementById('kakaoLoginBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-
-            const clientId = "${kakaoRestKey}";
-            const redirectUri = "${kakaoRedirectUri}";
-
-            const kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize"
-                + "?client_id=" + encodeURIComponent(clientId)
-                + "&redirect_uri=" + encodeURIComponent(redirectUri)
-                + "&response_type=code"
-                + "&prompt=login";
-
-            window.location.href = kakaoAuthUrl;
-        });
-        </script>
+		<!-- 카카오 로그인 -->
+		<a href="${kakaoLoginUrl}" class="kakao-btn-wrapper social-btn">
+		    <img src="/img/kakao_login.png" alt="카카오 로그인">
+		</a>
 
         <!-- 네이버 로그인 -->
         <a href="${naverLoginUrl}" class="naver-btn">
-            <img src="/img/naver-icon.png" class="naver-icon">
-            <span class="naver-text">네이버 로그인</span>
-        </a>
+		    <img src="/img/naver-icon.png" class="naver-icon">
+		    <span class="naver-text">네이버 로그인</span>
+		</a>
 
         <!-- 구글 로그인 -->
         <a href="${googleLoginUrl}" class="google-login-btn">

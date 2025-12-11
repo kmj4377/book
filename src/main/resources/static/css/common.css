@@ -21,7 +21,7 @@ body {
 }
 
 /* ------------------------------
-    📌 상단 바 (선 제거)
+    📌 상단바 / 메뉴바 테두리 제거
 ------------------------------ */
 .top-bar,
 .navbar,
@@ -30,9 +30,6 @@ header {
     box-shadow: none !important;
 }
 
-/* ------------------------------
-    📌 좌측 메뉴바 (선 제거)
------------------------------- */
 .w-64 {
     background-color: #c19077 !important;
     height: 100vh;
@@ -44,16 +41,13 @@ header {
     color: #2d1b0f !important;
 }
 
-/* 좌측 메뉴 경계선 제거 */
 .sidebar,
 .menu,
 .menu * {
     border: none !important;
 }
 
-/* ------------------------------
-    📌 메뉴 링크
------------------------------- */
+/* 메뉴 텍스트 */
 .menu li a {
     display: block;
     padding: 12px 0;
@@ -68,12 +62,12 @@ header {
 }
 
 /* ------------------------------
-    📌 Input 박스 색상 통일
+    📌 Input / Select / Textarea 통일 스타일
 ------------------------------ */
 input,
 select,
 textarea {
-    background-color: #f2d5b5 !important;  
+    background-color: #f2d5b5 !important;
     border: 1px solid #b99577 !important;
     padding: 12px;
     border-radius: 8px;
@@ -87,11 +81,11 @@ input:focus {
 }
 
 /* ------------------------------
-    📌 버튼 (가입 / 뒤로가기 포함)
+    📌 버튼 공통 스타일
 ------------------------------ */
 button,
 .btn {
-    background-color: #f2d5b5 !important; /* input과 색 통일 */
+    background-color: #f2d5b5 !important;
     border: 1px solid #b99577 !important;
     color: #3b2a1f !important;
     padding: 10px 16px;
@@ -104,7 +98,6 @@ button:hover,
     background-color: #e8c8a8 !important;
 }
 
-/* outline 버튼도 통일 */
 .btn-outline {
     background-color: #f2d5b5 !important;
     border: 1px solid #b99577 !important;
@@ -116,15 +109,15 @@ button:hover,
 }
 
 /* ------------------------------
-    📌 뒤로가기 영역 색도 통일
+    📌 공통 박스 색(예: 로그인 박스)
 ------------------------------ */
 .bg-white {
-    background-color: #b38b6d !important;  
+    background-color: #b38b6d !important;
     border-radius: 10px;
 }
 
 /* ------------------------------
-    📌 fieldset (박스 테두리 제거)
+    📌 Fieldset 박스 제거
 ------------------------------ */
 .fieldset {
     border: none !important;
@@ -136,21 +129,103 @@ button:hover,
     height: 45px;
     font-size: 18px;
     border-radius: 10px;
-    background-color: #f2d5b5 !important; 
+    background-color: #f2d5b5 !important;
     border: none !important;
     color: #000;
 }
 
-/* hover 효과(선택사항) */
 #backBtn:hover {
     opacity: 0.9;
 }
 
 .btn-join {
-    padding-top: 14px !important;   /* 위아래 여백 늘려서 키우기 */
+    padding-top: 14px !important;
     padding-bottom: 14px !important;
-    font-size: 17px !important;     /* 글자 크기 조금 키움 */
-    border-radius: 10px !important; /* 모서리 둥글게(선택사항) */
+    font-size: 17px !important;
+    border-radius: 10px !important;
 }
 
+/* ------------------------------
+    📌 로그인 박스 레이아웃
+------------------------------ */
+.login-container {
+    max-width: 500px !important;
+    width: 100% !important;
+    margin: 80px auto 0 auto;
+    background-color: #f5e8d8;
+    padding: 40px 50px;
+    border-radius: 12px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+}
 
+.login-box {
+    width: 100% !important;
+}
+
+/* ------------------------------
+    📌 SNS 로그인 버튼 (★최종 디자인 완성본★)
+------------------------------ */
+
+.social-btn {
+    width: 100%;
+    height: 52px;
+    margin-top: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    text-decoration: none;
+
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.18);
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.social-btn:hover {
+    filter: brightness(1.05);
+}
+
+/* 카카오 로그인 */
+.kakao-btn {
+    background-color: #FEE500;
+    color: #3b2a1f;
+}
+.kakao-btn img {
+    position: absolute;
+    left: 16px;
+    width: 28px;
+    height: 28px;
+}
+
+/* 네이버 로그인 */
+.naver-btn {
+    background-color: #03C75A;
+    color: white !important;
+}
+.naver-btn img {
+    position: absolute;
+    left: 16px;
+    width: 32px;
+    height: 32px;
+}
+
+/* 구글 로그인 */
+.google-btn {
+    background-color: #ffffff;
+    border: 1px solid #cfcfcf;
+    color: #3c4043;
+}
+.google-btn:hover {
+    background-color: #f5f5f5;
+}
+.google-btn img {
+    position: absolute;
+    left: 16px;
+    width: 28px;
+    height: 28px;
+}
