@@ -26,11 +26,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/usr/member/join",
                         "/usr/member/doJoin",
                         "/usr/member/loginIdDupChk",
+                        "/usr/member/emailAuth",
 
                         // 🔥 이메일 인증 관련 (반드시 필요)
                         "/usr/member/sendEmailAuthCode",
                         "/usr/member/checkEmailAuthCode",
-
+                        "/usr/member/sendEmailAuthCode",      
+                        "/usr/member/checkEmailAuthCode",
+                        
                         // 소셜 로그인 콜백
                         "/usr/member/kakao/callback",
                         "/usr/member/naver/callback",

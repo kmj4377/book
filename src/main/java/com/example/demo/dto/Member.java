@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,8 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Member {
 	private int id;
-	private String regDate;
-	private String updateDate;
+	private LocalDateTime regDate;
+	private LocalDateTime updateDate;
+	private LocalDateTime  lastLoginAt;
 	private String loginId;
 	private String loginPw;
 	private String name;
@@ -20,4 +23,7 @@ public class Member {
     private String googleId;
     private String email;
     private String nickname;
+    private int emailAuthed;
+    private int emailVerified;
+    private String emailVerifiedAt; 
 }

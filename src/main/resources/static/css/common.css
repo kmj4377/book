@@ -1,8 +1,8 @@
 @charset "UTF-8";
 
-/* ------------------------------
-    📌 공통 폰트
------------------------------- */
+/* ==============================
+   📌 공통 폰트
+============================== */
 @font-face {
     font-family: 'SchoolSafetyWing';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2511-1@1.0/HakgyoansimNalgaeR.woff2') format('woff2');
@@ -10,9 +10,9 @@
     font-display: swap;
 }
 
-/* ------------------------------
-    📌 전체 배경, 텍스트
------------------------------- */
+/* ==============================
+   📌 전체 배경 / 텍스트
+============================== */
 body {
     font-family: 'SchoolSafetyWing', sans-serif;
     background-color: #b38b6d;
@@ -20,58 +20,60 @@ body {
     margin: 0;
 }
 
-/* ------------------------------
-    📌 상단바 / 메뉴바 테두리 제거
------------------------------- */
+/* ==============================
+   📌 상단바 / 사이드바
+============================== */
 .top-bar,
 .navbar,
-header {
+header,
+.sidebar,
+.menu,
+.menu * {
     border: none !important;
     box-shadow: none !important;
 }
 
+/* 사이드바 */
 .w-64 {
-    background-color: #c19077 !important;
+    top: 0;
+    left: 0;
+    width: 16rem;
     height: 100vh;
-    border: none !important;
+
+    background-color: #c19077 !important;
     box-shadow: none !important;
+    border: none !important;
+    z-index: 100;
 }
 
 .w-64 * {
     color: #2d1b0f !important;
 }
 
-.sidebar,
-.menu,
-.menu * {
-    border: none !important;
-}
 
-/* 메뉴 텍스트 */
 .menu li a {
     display: block;
     padding: 12px 0;
     text-align: center;
-    color: #2d1b0f !important;
     font-size: 20px;
-    border: none !important;
+    color: #2d1b0f !important;
 }
 
 .menu li a:hover {
     background-color: #d9b59a !important;
 }
 
-/* ------------------------------
-    📌 Input / Select / Textarea 통일 스타일
------------------------------- */
+/* ==============================
+   📌 Input / Select / Textarea
+============================== */
 input,
 select,
 textarea {
-    background-color: #f2d5b5 !important;
-    border: 1px solid #b99577 !important;
+    width: 100%;
     padding: 12px;
     border-radius: 8px;
-    width: 100%;
+    background-color: #f2d5b5 !important;
+    border: 1px solid #b99577 !important;
     color: #3b2a1f !important;
 }
 
@@ -80,16 +82,16 @@ input:focus {
     border-color: #8d5f3a !important;
 }
 
-/* ------------------------------
-    📌 버튼 공통 스타일
------------------------------- */
+/* ==============================
+   📌 버튼 공통
+============================== */
 button,
 .btn {
+    padding: 10px 16px;
+    border-radius: 8px;
     background-color: #f2d5b5 !important;
     border: 1px solid #b99577 !important;
     color: #3b2a1f !important;
-    padding: 10px 16px;
-    border-radius: 8px;
     transition: 0.2s;
 }
 
@@ -101,131 +103,188 @@ button:hover,
 .btn-outline {
     background-color: #f2d5b5 !important;
     border: 1px solid #b99577 !important;
-    color: #3b2a1f !important;
 }
 
-.btn-outline:hover {
-    background-color: #e8c8a8 !important;
-}
-
-/* ------------------------------
-    📌 공통 박스 색(예: 로그인 박스)
------------------------------- */
-.bg-white {
-    background-color: #b38b6d !important;
-    border-radius: 10px;
-}
-
-/* ------------------------------
-    📌 Fieldset 박스 제거
------------------------------- */
-.fieldset {
-    border: none !important;
-    background: transparent !important;
-}
-
-#backBtn {
-    width: 150px;
-    height: 45px;
-    font-size: 18px;
-    border-radius: 10px;
-    background-color: #f2d5b5 !important;
-    border: none !important;
-    color: #000;
-}
-
-#backBtn:hover {
-    opacity: 0.9;
-}
-
-.btn-join {
-    padding-top: 14px !important;
-    padding-bottom: 14px !important;
-    font-size: 17px !important;
-    border-radius: 10px !important;
-}
-
-/* ------------------------------
-    📌 로그인 박스 레이아웃
------------------------------- */
-.login-container {
-    max-width: 500px !important;
-    width: 100% !important;
-    margin: 80px auto 0 auto;
+/* ==============================
+   📌 마이페이지 카드
+============================== */
+.mypage-card {
+    max-width: 680px;
+    margin: 32px auto 0;
+    padding: 56px;
     background-color: #f5e8d8;
-    padding: 40px 50px;
-    border-radius: 12px;
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 22px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.2);
 }
 
-.login-box {
-    width: 100% !important;
+.mypage-title {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 40px;
 }
 
-/* ------------------------------
-    📌 SNS 로그인 버튼 (★최종 디자인 완성본★)
------------------------------- */
-
-.social-btn {
+/* ==============================
+   📌 마이페이지 테이블
+============================== */
+.mypage-table {
     width: 100%;
-    height: 52px;
-    margin-top: 18px;
+    border-collapse: separate;
+    border-spacing: 0 18px;
+}
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+.mypage-table th {
+    width: 140px;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 500;
+    color: #6b4f3f;
+}
 
-    border-radius: 10px;
+.mypage-table td {
     font-size: 17px;
     font-weight: 600;
-    text-decoration: none;
-
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.18);
-    transition: 0.2s;
-    cursor: pointer;
-}
-
-.social-btn:hover {
-    filter: brightness(1.05);
-}
-
-/* 카카오 로그인 */
-.kakao-btn {
-    background-color: #FEE500;
     color: #3b2a1f;
 }
-.kakao-btn img {
-    position: absolute;
-    left: 16px;
-    width: 28px;
-    height: 28px;
+
+/* ==============================
+   📌 마이페이지 버튼
+============================== */
+.mypage-btn-row {
+    margin-top: 32px;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
 }
 
-/* 네이버 로그인 */
-.naver-btn {
-    background-color: #03C75A;
-    color: white !important;
-}
-.naver-btn img {
-    position: absolute;
-    left: 16px;
-    width: 32px;
-    height: 32px;
+.mypage-btn {
+    padding: 16px 34px;
+    border-radius: 12px;
+    background-color: #f2d5b5;
+    border: 1px solid #b99577;
+    font-weight: 600;
+    font-size: 16px;
 }
 
-/* 구글 로그인 */
-.google-btn {
-    background-color: #ffffff;
-    border: 1px solid #cfcfcf;
-    color: #3c4043;
+.mypage-btn:hover {
+    background-color: #e8c8a8;
 }
-.google-btn:hover {
-    background-color: #f5f5f5;
+
+   /* 이메일 인증 영역 (핵심)*/
+.email-auth-wrap {
+    display: flex;
+    align-items: center;
+    gap: 16px;              
 }
-.google-btn img {
-    position: absolute;
-    left: 16px;
-    width: 28px;
-    height: 28px;
+
+.email-auth-wrap .status,
+.email-auth-wrap .auth-btn {
+    white-space: nowrap;
 }
+
+/* 상태 텍스트 */
+.status {
+    display: inline-flex !important;
+    align-items: center;
+    font-weight: 600;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+
+/* 상태 색상 */
+.status.success {
+    color: #2e7d32;
+}
+
+.status.warning {
+    color: #d32f2f;
+    background: transparent !important;
+    text-shadow: none !important;
+    filter: none !important;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* 기본 상태: 밑줄 제거 */
+.link-btn {
+    text-decoration: none;
+    margin-left: 30px;   /* ← 시각적 분리 핵심 */
+}
+
+/* 마우스 올렸을 때만 밑줄 */
+.link-btn:hover {
+    text-decoration: underline;
+}
+
+/* ===============================
+   사이드바 고정
+=============================== */
+.sidebar-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 16rem; /* w-64 */
+    z-index: 100;
+}
+
+/* ===============================
+   메인 영역 보정
+=============================== */
+.layout-main {
+    padding-left: 16rem; /* 사이드바 폭 */
+}
+
+/* ===============================
+   메인 콘텐츠 중앙 정렬
+=============================== */
+.home-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 40px;
+}
+
+.category-chart-box {
+    position: relative;
+    width: 100%;
+    margin-top: 30px;
+    height: 200px;          /* ← 카드에 맞게 여기만 조절 */
+    overflow: hidden;       /* ⭐ 카드 밖으로 절대 안 나감 */
+}
+
+.category-chart-box canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.ym-form {
+    margin-bottom: 10px;
+}
+
+.ym-row {
+    display: flex;
+    gap: 10px;
+}
+
+.ym-item {
+    flex: 1;
+}
+
+.ym-item label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.ym-item select {
+    width: 100%;
+    height: 34px;          /* 🔥 작게 */
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+

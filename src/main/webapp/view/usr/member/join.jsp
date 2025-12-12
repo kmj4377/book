@@ -17,7 +17,7 @@
     }
     .join-card {
         width: 600px;
-        background: #f5e9d3;
+        background: #f5e8d8;
         padding: 35px 40px;
         border-radius: 20px;
         box-shadow: 0 10px 25px rgba(0,0,0,0.18);

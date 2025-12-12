@@ -73,7 +73,6 @@ public class NaverService {
         // ⭐ response 내부가 실제 사용자 정보
         Map<String, Object> user = (Map<String, Object>) response.getBody().get("response");
 
-        System.out.println("네이버 사용자 데이터 = " + user); // 디버깅용
 
         return user;
     }

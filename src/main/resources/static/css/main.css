@@ -1,4 +1,7 @@
 .home-wrapper {
+	width: 100%;
+    max-width: none;     
+    margin: 0 auto;         
     height: calc(100vh - 80px);
     display: flex;
     flex-direction: column;
@@ -6,6 +9,7 @@
     box-sizing: border-box;
     overflow: hidden;
 }
+
 
 .top-row {
     height: 10vh;
@@ -91,3 +95,5 @@
     margin: 0 !important;
     padding: 0 !important;
 }
+
+

@@ -19,15 +19,18 @@ CREATE TABLE `member` (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     regDate DATETIME NOT NULL,
     updateDate DATETIME NOT NULL,
+    last_login_at DATETIME NULL,
     loginId VARCHAR(50) UNIQUE,
     loginPw VARCHAR(100) NULL,
     `name` VARCHAR(20) NOT NULL,
+    nickname VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    email_verified TINYINT(1) NOT NULL DEFAULT 0,
+    email_verified_at DATETIME NULL,
     authLevel INT UNSIGNED NOT NULL DEFAULT 1,
     kakao_id BIGINT UNIQUE,
     naver_id VARCHAR(100) UNIQUE,
-    google_id VARCHAR(255) UNIQUE,
-    nickname VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL
+    google_id VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE budget (

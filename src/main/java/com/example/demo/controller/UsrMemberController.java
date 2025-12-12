@@ -150,11 +150,19 @@ public class UsrMemberController {
         if (!member.getLoginPw().equals(loginPw))
             return req.jsHistoryBack("비밀번호가 일치하지 않습니다.");
 
-        LoginedMember loginedMember = new LoginedMember(member);
+        // ⭐ 최근 로그인 시간 업데이트
+        memberService.updateLastLoginAt(member.getId());
+
+        // ⭐ 반드시 다시 조회
+        Member updatedMember = memberService.getMemberById(member.getId());
+
+        // ⭐ 최신 데이터로 세션 생성
+        LoginedMember loginedMember = new LoginedMember(updatedMember);
         req.login(loginedMember);
 
-        return req.jsReplace(member.getLoginId() + "님 환영합니다!", "/usr/home/main");
+        return req.jsReplace(updatedMember.getLoginId() + "님 환영합니다!", "/usr/home/main");
     }
+
 
     // ------------------ 로그아웃 ------------------
     @GetMapping("/logout")
@@ -272,4 +280,129 @@ public class UsrMemberController {
 
         return ResultData.from("S-1", "사용 가능한 아이디입니다.");
     }
+    
+ // ------------------ 내 정보 페이지 ------------------
+    @GetMapping("/mypage")
+    public String myPage(Model model) {
+
+        LoginedMember loginedMember = req.getLoginedMember();
+
+        if (loginedMember == null) {
+            return "redirect:/usr/member/login";
+        }
+
+        // DB에서 최신 정보 다시 조회 (중요)
+        Member member = memberService.getMemberById(loginedMember.getId());
+
+        model.addAttribute("member", member);
+
+        return "usr/member/mypage";
+    }
+    
+ // ------------------ 내 정보 수정 페이지 ------------------
+    @GetMapping("/edit")
+    public String edit(Model model) {
+
+        LoginedMember loginedMember = req.getLoginedMember();
+        if (loginedMember == null) {
+            return "redirect:/usr/member/login";
+        }
+
+        Member member = memberService.getMemberById(loginedMember.getId());
+        model.addAttribute("member", member);
+
+        return "usr/member/edit";
+    }
+
+ // ------------------ 내 정보 수정 처리 ------------------
+    @PostMapping("/doEdit")
+    @ResponseBody
+    public String doEdit(String name, String nickname, String email) {
+
+        LoginedMember loginedMember = req.getLoginedMember();
+        if (loginedMember == null) {
+            return req.jsReplace("로그인 후 이용해주세요.", "/usr/member/login");
+        }
+
+        if (name == null || name.trim().isEmpty()) {
+            return req.jsHistoryBack("이름은 필수 입력입니다.");
+        }
+
+        if (nickname == null || nickname.trim().isEmpty()) {
+            return req.jsHistoryBack("닉네임은 필수 입력입니다.");
+        }
+
+        memberService.updateMemberInfo(
+                loginedMember.getId(),
+                name.trim(),
+                nickname.trim(),
+                email != null ? email.trim() : null
+        );
+
+        return req.jsReplace("정보가 수정되었습니다.", "/usr/member/mypage");
+    }
+    
+ // ------------------ 비밀번호 변경 페이지 ------------------
+    @GetMapping("/password")
+    public String password() {
+
+        LoginedMember loginedMember = req.getLoginedMember();
+        if (loginedMember == null) {
+            return "redirect:/usr/member/login";
+        }
+
+        // SNS 회원 차단
+        if (loginedMember.getKakaoId() != null
+            || loginedMember.getNaverId() != null
+            || loginedMember.getGoogleId() != null) {
+
+            return "redirect:/usr/member/mypage";
+        }
+
+        return "usr/member/password";
+    }
+    
+ // ------------------ 비밀번호 변경 처리 ------------------
+    @PostMapping("/doChangePassword")
+    @ResponseBody
+    public String doChangePassword(String oldPw, String newPw, String newPwChk) {
+
+        LoginedMember loginedMember = req.getLoginedMember();
+        if (loginedMember == null) {
+            return req.jsReplace("로그인 후 이용해주세요.", "/usr/member/login");
+        }
+
+        if (!newPw.equals(newPwChk)) {
+            return req.jsHistoryBack("새 비밀번호가 일치하지 않습니다.");
+        }
+
+        Member member = memberService.getMemberById(loginedMember.getId());
+
+        if (!member.getLoginPw().equals(oldPw)) {
+            return req.jsHistoryBack("현재 비밀번호가 올바르지 않습니다.");
+        }
+
+        memberService.changePassword(loginedMember.getId(),oldPw ,newPw);
+
+        return req.jsReplace("비밀번호가 변경되었습니다.", "/usr/member/mypage");
+    }
+    
+ // ------------------ 이메일 인증 페이지 ------------------
+    @GetMapping("/emailAuth")
+    public String emailAuth(Model model) {
+
+        LoginedMember loginedMember = req.getLoginedMember();
+        if (loginedMember == null) {
+            return "redirect:/usr/member/login";
+        }
+
+        // 현재 로그인한 회원 이메일 전달
+        Member member = memberService.getMemberById(loginedMember.getId());
+        model.addAttribute("email", member.getEmail());
+
+        return "usr/member/emailAuth";
+    }
+
+
+    
 }

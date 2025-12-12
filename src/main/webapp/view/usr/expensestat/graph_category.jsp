@@ -3,26 +3,32 @@
 
 <h3>카테고리별 지출 비율</h3>
 
-<form method="get" action="">
-    <label>년</label>
-    <select name="year" onchange="this.form.submit()">
-        <c:forEach var="y" begin="2020" end="2030">
-            <option value="${y}" ${y == selectedYear ? 'selected' : ''}>${y}</option>
-        </c:forEach>
-    </select>
+<form method="get" action="" class="ym-form">
+    <div class="ym-row">
+        <div class="ym-item">
+            <label>년</label>
+            <select name="year" onchange="this.form.submit()">
+                <c:forEach var="y" begin="2020" end="2030">
+                    <option value="${y}" ${y == selectedYear ? 'selected' : ''}>${y}</option>
+                </c:forEach>
+            </select>
+        </div>
 
-    <label>월</label>
-    <select name="month" onchange="this.form.submit()">
-        <c:forEach var="m" begin="1" end="12">
-            <option value="${m}" ${m == selectedMonth ? 'selected' : ''}>${m}월</option>
-        </c:forEach>
-    </select>
+        <div class="ym-item">
+            <label>월</label>
+            <select name="month" onchange="this.form.submit()">
+                <c:forEach var="m" begin="1" end="12">
+                    <option value="${m}" ${m == selectedMonth ? 'selected' : ''}>${m}월</option>
+                </c:forEach>
+            </select>
+        </div>
+    </div>
 </form>
 
-<hr>
+
 
 <!-- 차트 영역 (스크롤 안생기도록 높이 고정) -->
-<div style="width:100%; height:260px; position:relative; overflow:hidden;">
+<div class="category-chart-box">
     <canvas id="categoryChart"></canvas>
 </div>
 
@@ -51,15 +57,24 @@
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,   // 고정 높이에 맞게 원 자동 축소
-            cutout: "60%",                // 도넛 중앙 크기 확대 → 전체 원 크기 줄어듦
+            maintainAspectRatio: false, 
+            cutout: '60%',              
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: { boxWidth: 12 }
+                    labels: {
+                        boxWidth: 12,
+                        padding: 10
+                    }
                 }
             },
-            layout: { padding: 0 }         // 전체 여백 제거
+            layout: {
+                padding: {
+                    top: 0,
+                    bottom: 0
+                }
+            }
         }
     });
+
 </script>

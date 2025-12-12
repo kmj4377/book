@@ -16,11 +16,16 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${GOOGLE_EMAIL_ID}       
-    password: ${GOOGLE_APP_PASSWORD}  
+    username: ${GOOGLE_EMAIL_ID}
+    password: ${GOOGLE_APP_PASSWORD}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
 
 server:
   port: 8081
