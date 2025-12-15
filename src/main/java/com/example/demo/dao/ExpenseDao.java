@@ -3,12 +3,7 @@ package com.example.demo.dao;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import com.example.demo.dto.CategoryExpense;
 import com.example.demo.dto.Expense;
@@ -16,61 +11,113 @@ import com.example.demo.dto.Expense;
 @Mapper
 public interface ExpenseDao {
 
+    /* ===============================
+       지출 등록
+    =============================== */
     @Insert("""
         INSERT INTO expense
         SET regDate = NOW(),
             updateDate = NOW(),
+            subCategoryId = #{subCategoryId},
             memberId = #{memberId},
             amount = #{amount},
-            category = #{category},
             memo = #{memo},
             expenseDate = #{expenseDate}
     """)
     void write(
+        @Param("subCategoryId") int subCategoryId,
         @Param("memberId") int memberId,
         @Param("amount") int amount,
-        @Param("category") String category,
         @Param("memo") String memo,
         @Param("expenseDate") String expenseDate
     );
 
+    /* ===============================
+       전체 목록 조회
+    =============================== */
     @Select("""
-        SELECT *
-        FROM expense
-        WHERE memberId = #{memberId}
-        ORDER BY id DESC
+        SELECT
+            e.*,
+            cs.name AS subCategoryName,
+            cm.name AS mainCategoryName,
+            cm.color AS mainCategoryColor
+        FROM expense e
+        JOIN category_sub cs ON e.subCategoryId = cs.id
+        JOIN category_main cm ON cs.mainId = cm.id
+        WHERE e.memberId = #{memberId}
+        ORDER BY e.regDate DESC
     """)
-    List<Expense> getListByMemberId(@Param("memberId") int memberId);
+    List<Expense> getExpenses(@Param("memberId") int memberId);
 
+    /* ===============================
+       날짜별 목록 조회
+    =============================== */
     @Select("""
-        SELECT *
-        FROM expense
-        WHERE id = #{id}
+        SELECT
+            e.*,
+            cs.name AS subCategoryName,
+            cm.name AS mainCategoryName,
+            cm.color AS mainCategoryColor
+        FROM expense e
+        JOIN category_sub cs ON e.subCategoryId = cs.id
+        JOIN category_main cm ON cs.mainId = cm.id
+        WHERE e.memberId = #{memberId}
+          AND e.expenseDate = #{date}
+        ORDER BY e.regDate DESC
+    """)
+    List<Expense> getExpensesByDate(
+        @Param("memberId") int memberId,
+        @Param("date") String date
+    );
+
+    /* ===============================
+       단건 조회
+    =============================== */
+    @Select("""
+        SELECT
+            e.*,
+            cs.name AS subCategoryName,
+            cm.name AS mainCategoryName,
+            cm.color AS mainCategoryColor
+        FROM expense e
+        JOIN category_sub cs ON e.subCategoryId = cs.id
+        JOIN category_main cm ON cs.mainId = cm.id
+        WHERE e.id = #{id}
     """)
     Expense getExpenseById(@Param("id") int id);
 
+    /* ===============================
+       수정
+    =============================== */
     @Update("""
         UPDATE expense
         SET updateDate = NOW(),
+            subCategoryId = #{subCategoryId},
             amount = #{amount},
-            category = #{category},
             memo = #{memo},
             expenseDate = #{expenseDate}
         WHERE id = #{id}
     """)
     void update(
         @Param("id") int id,
+        @Param("subCategoryId") int subCategoryId,
         @Param("amount") int amount,
-        @Param("category") String category,
         @Param("memo") String memo,
         @Param("expenseDate") String expenseDate
     );
 
-    @Delete("DELETE FROM expense WHERE id = #{id}")
+    /* ===============================
+       삭제
+    =============================== */
+    @Delete("""
+        DELETE FROM expense
+        WHERE id = #{id}
+    """)
     void delete(@Param("id") int id);
 
-
-    // ✔ 월간 총합
+    /* ===============================
+       📊 월별 총 지출
+    =============================== */
     @Select("""
         SELECT COALESCE(SUM(amount), 0)
         FROM expense
@@ -78,69 +125,40 @@ public interface ExpenseDao {
           AND YEAR(expenseDate) = #{year}
           AND MONTH(expenseDate) = #{month}
     """)
-    long getMonthlyExpense(
-        @Param("year") int year,
-        @Param("month") int month,
-        @Param("memberId") int memberId
-    );
-
-    // ✔ 월간 카테고리 합계
-    @Select("""
-        SELECT category AS category,
-               COALESCE(SUM(amount), 0) AS totalAmount
-        FROM expense
-        WHERE memberId = #{memberId}
-          AND YEAR(expenseDate) = #{year}
-          AND MONTH(expenseDate) = #{month}
-        GROUP BY category
-    """)
-    List<CategoryExpense> getCategorySummary(
-        @Param("year") int year,
-        @Param("month") int month,
-        @Param("memberId") int memberId
-    );
-
-
-    // ✔ 월간 수입
-    @Select("""
-        SELECT IFNULL(SUM(amount), 0)
-        FROM income
-        WHERE YEAR(incomeDate) = #{year}
-          AND MONTH(incomeDate) = #{month}
-    """)
-    int getMonthlyIncome(
+    int getMonthlyTotalExpense(
+        @Param("memberId") int memberId,
         @Param("year") int year,
         @Param("month") int month
     );
 
-
-    // ✔ regDate 기준 월 총 소비
+    /* ===============================
+       📊 메인 카테고리별 통계
+    =============================== */
     @Select("""
-        SELECT IFNULL(SUM(amount), 0)
-        FROM expense
-        WHERE memberId = #{memberId}
-          AND DATE_FORMAT(regDate, '%Y-%m') = #{yearMonth}
+        SELECT
+            cm.name AS category,
+            cm.color AS color,
+            SUM(e.amount) AS total
+        FROM expense e
+        JOIN category_sub cs ON e.subCategoryId = cs.id
+        JOIN category_main cm ON cs.mainId = cm.id
+        WHERE e.memberId = #{memberId}
+          AND YEAR(e.expenseDate) = #{year}
+          AND MONTH(e.expenseDate) = #{month}
+        GROUP BY cm.id
+        ORDER BY cm.sortOrder
     """)
-    int getMonthlyTotalExpense(
+    List<CategoryExpense> getCategorySummary(
         @Param("memberId") int memberId,
-        @Param("yearMonth") String yearMonth
+        @Param("year") int year,
+        @Param("month") int month
     );
 
-    // ✔ date 컬럼 오타 존재하던 메서드는 그대로 둠 (필요 없으면 삭제 가능)
+    /* ===============================
+       📊 월별 일 지출 합계 (차트)
+    =============================== */
     @Select("""
-        SELECT IFNULL(SUM(amount), 0)
-        FROM expense
-        WHERE memberId = #{memberId}
-          AND DATE_FORMAT(expenseDate, '%Y-%m') = #{month}
-    """)
-    int getTotalByMonth(
-        @Param("memberId") int memberId,
-        @Param("month") String month
-    );
-
-
-    @Select("""
-        SELECT 
+        SELECT
             DAY(expenseDate) AS day,
             SUM(amount) AS amount
         FROM expense
@@ -148,6 +166,7 @@ public interface ExpenseDao {
           AND YEAR(expenseDate) = #{year}
           AND MONTH(expenseDate) = #{month}
         GROUP BY DAY(expenseDate)
+        ORDER BY day
     """)
     List<Map<String, Object>> getDailyExpenseByMonth(
         @Param("memberId") int memberId,
@@ -155,48 +174,55 @@ public interface ExpenseDao {
         @Param("month") int month
     );
 
-
+    /* ===============================
+       🔍 키워드 검색
+    =============================== */
     @Select("""
-        SELECT IFNULL(SUM(amount), 0)
-        FROM expense
-        WHERE memberId = #{memberId}
-          AND expenseDate = #{date}
+        SELECT
+            e.*,
+            cs.name AS subCategoryName,
+            cm.name AS mainCategoryName,
+            cm.color AS mainCategoryColor
+        FROM expense e
+        JOIN category_sub cs ON e.subCategoryId = cs.id
+        JOIN category_main cm ON cs.mainId = cm.id
+        WHERE e.memberId = #{memberId}
+          AND (
+                e.memo LIKE CONCAT('%', #{keyword}, '%')
+             OR cs.name LIKE CONCAT('%', #{keyword}, '%')
+             OR cm.name LIKE CONCAT('%', #{keyword}, '%')
+          )
+        ORDER BY e.regDate DESC
     """)
-    int getDailyExpenseByDate(
+    List<Expense> getExpensesByKeyword(
         @Param("memberId") int memberId,
-        @Param("date") String date
+        @Param("keyword") String keyword
     );
 
+    /* ===============================
+       🔍 날짜 + 키워드 검색
+    =============================== */
     @Select("""
-        SELECT IFNULL(SUM(amount), 0)
-        FROM expense
-        WHERE memberId = #{memberId}
-          AND YEAR(expenseDate) = #{year}
-          AND MONTH(expenseDate) = #{month}
-          AND DAY(expenseDate) = #{day}
+        SELECT
+            e.*,
+            cs.name AS subCategoryName,
+            cm.name AS mainCategoryName,
+            cm.color AS mainCategoryColor
+        FROM expense e
+        JOIN category_sub cs ON e.subCategoryId = cs.id
+        JOIN category_main cm ON cs.mainId = cm.id
+        WHERE e.memberId = #{memberId}
+          AND e.expenseDate = #{date}
+          AND (
+                e.memo LIKE CONCAT('%', #{keyword}, '%')
+             OR cs.name LIKE CONCAT('%', #{keyword}, '%')
+             OR cm.name LIKE CONCAT('%', #{keyword}, '%')
+          )
+        ORDER BY e.regDate DESC
     """)
-    int getDailyExpense(
+    List<Expense> getExpensesByDateAndKeyword(
         @Param("memberId") int memberId,
-        @Param("year") int year,
-        @Param("month") int month,
-        @Param("day") int day
+        @Param("date") String date,
+        @Param("keyword") String keyword
     );
-    
-    @Select("""
-    	    SELECT *
-    	    FROM expense
-    	    WHERE memberId = #{memberId}
-    	      AND DATE(regDate) = #{date}
-    	    ORDER BY regDate DESC
-    	""")
-    	List<Expense> getExpensesByDate(int memberId, String date);
-    
-    @Select("""
-    	    SELECT *
-    	    FROM expense
-    	    WHERE memberId = #{memberId}
-    	    ORDER BY regDate DESC
-    	""")
-    	List<Expense> getExpenses(int memberId);
-
 }

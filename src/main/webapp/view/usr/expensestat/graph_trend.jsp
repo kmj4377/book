@@ -4,7 +4,6 @@
 
 <div class="px-6 pt-4 max-w-4xl mx-auto">
 
-    <h2 class="text-xl font-bold mb-4">월별 지출 추이</h2>
 
     <div class="bg-white rounded-lg shadow p-4">
         <canvas id="monthlyTrendChart" height="120"></canvas>

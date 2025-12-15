@@ -96,19 +96,21 @@
             chart: {
                 height: 300,
                 type: 'radialBar',
+                offsetY: -20
             },
             plotOptions: {
                 radialBar: {
                     startAngle: -90,
                     endAngle: 90,
                     track: {
-                        background: "#e7e7e7",
+                        background: "#fff",
                         strokeWidth: '100%',
                     },
                     dataLabels: {
                         name: { show: false },
                         value: {
                             fontSize: '28px',
+                            offsetY: -10,
                             formatter: function (val) {
                                 return val.toFixed(1) + "%";
                             }
@@ -122,9 +124,18 @@
         };
 
         document.querySelector("#gaugeChart").innerHTML = "";
-        var chart = new ApexCharts(document.querySelector("#gaugeChart"), options);
-        chart.render();
+        var chart = new ApexCharts(
+            document.querySelector("#gaugeChart"),
+            options
+        );
+
+        // ✅ render는 딱 한 번만
+        chart.render().then(() => {
+            window.dispatchEvent(new Event('resize'));
+        });
     }
+
+
 </script>
 
 <!-- include 아닐 때만 footer 포함 -->

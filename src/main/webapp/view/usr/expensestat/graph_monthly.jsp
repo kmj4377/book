@@ -1,7 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<h3> 월별 지출 통계</h3>
 
 <canvas id="monthlyChart" width="400" height="200"></canvas>
 

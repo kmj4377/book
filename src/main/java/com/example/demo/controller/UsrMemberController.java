@@ -224,17 +224,31 @@ public class UsrMemberController {
                                 @RequestParam String state,
                                 HttpSession session) {
 
+        // 1️⃣ state 검증
+        String sessionState = (String) session.getAttribute("naverState");
+        if (sessionState == null || !sessionState.equals(state)) {
+            return "redirect:/usr/member/login?msg=naver-state-mismatch";
+        }
+
         try {
-            String sessionState = (String) session.getAttribute("naverState");
-            if (sessionState == null || !sessionState.equals(state)) {
-                return "redirect:/usr/member/login?msg=naver-state-mismatch";
-            }
-
+            // 2️⃣ 네이버 사용자 정보 조회
             Map<String, Object> naverUser = naverService.getNaverUser(code, state);
-            LoginedMember loginedMember = memberService.loginOrJoinNaver(naverUser);
 
+            // 3️⃣ 로그인 or 회원가입
+            LoginedMember loginedMember =
+                    memberService.loginOrJoinNaver(naverUser);
+
+            // 4️⃣ 로그인 처리 (세션 저장은 여기서 끝)
             req.login(loginedMember);
-            session.setAttribute("loginedMember", loginedMember);
+
+            // 5️⃣ 로그인 전 페이지로 이동 (없으면 홈)
+            String redirectUri =
+                    (String) session.getAttribute("afterLoginRedirectUri");
+
+            if (redirectUri != null) {
+                session.removeAttribute("afterLoginRedirectUri");
+                return "redirect:" + redirectUri;
+            }
 
             return "redirect:/usr/home/main";
 
@@ -243,6 +257,7 @@ public class UsrMemberController {
             return "redirect:/usr/member/login?msg=naver-login-failed";
         }
     }
+
 
     // ------------------ 구글 Callback ------------------
     @GetMapping("/google/callback")

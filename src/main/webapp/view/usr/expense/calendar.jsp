@@ -10,14 +10,14 @@
 
 <style>
     body {
-        background: #f6eee6;
+        background: #b38b6d;
     }
 
     .calendar-wrapper {
         width: 100%;
         max-width: 1300px; 
         margin: 20px auto;
-        background: #ffffff;
+        background: #f5e8d8;
         padding: 30px;
         border-radius: 20px;
         box-shadow: 0 4px 18px rgba(0,0,0,0.12);

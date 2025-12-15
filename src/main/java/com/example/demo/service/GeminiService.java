@@ -5,12 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -22,54 +19,81 @@ public class GeminiService {
     @Value("${gemini.url}")
     private String geminiApiUrl;
 
-    public String categoryFromMemo(String memoText) {
+    /**
+     * 🔥 메모 → subCategoryId 자동 추천
+     */
+    public int subCategoryIdFromMemo(String memoText) {
 
         RestTemplate rest = new RestTemplate();
 
-        // ---------------------
-        // 요청 JSON 만들기
-        // ---------------------
-        Map<String, Object> content = new HashMap<>();
-        content.put("contents", List.of(
+        Map<String, Object> body = new HashMap<>();
+        body.put("contents", List.of(
                 Map.of("parts", List.of(
                         Map.of("text",
-                                "다음 메모를 보고 지출 카테고리를 하나만 추천해줘. " +
-                                "[식비, 교통비, 쇼핑, 생활비, 기타] 중에서 하나만 답해. 메모: " + memoText
-                        )
-                )))
-        );
+                                """
+                                다음 지출 메모를 보고 가장 적절한 하위 카테고리를 하나만 골라라.
+                                아래 목록 중에서 정확히 하나만 답해라.
 
-        // ---------------------
-        // 헤더 설정
-        // ---------------------
+                                [택시, 지하철, 버스, 외식, 카페, 마트, 쇼핑, 통신비, 공과금, 기타]
+
+                                메모: %s
+                                """.formatted(memoText)
+                        )
+                ))
+        ));
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // Authorization 헤더 추가 (선택이지만 대부분의 환경에서 안전)
         headers.set("x-goog-api-key", apiKey);
 
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(content, headers);
+        HttpEntity<Map<String, Object>> request =
+                new HttpEntity<>(body, headers);
 
         try {
             ResponseEntity<Map> response = rest.exchange(
-                    geminiApiUrl,  // key 포함된 URL
+                    geminiApiUrl,
                     HttpMethod.POST,
                     request,
                     Map.class
             );
 
-            // ---------------------
-            // 응답 파싱
-            // ---------------------
-            Map candidate = (Map) ((List) response.getBody().get("candidates")).get(0);
-            Map contentObj = (Map) candidate.get("content");
-            List<Map> parts = (List<Map>) contentObj.get("parts");
+            Map candidate =
+                    (Map) ((List) response.getBody().get("candidates")).get(0);
+            Map content =
+                    (Map) candidate.get("content");
+            List<Map> parts =
+                    (List<Map>) content.get("parts");
 
-            return parts.get(0).get("text").toString().trim();
+            String result = parts.get(0).get("text").toString().trim();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "기타";
+            return mapSubCategoryNameToId(result);
+
+        } catch (HttpClientErrorException e) {
+            return getDefaultSubCategoryId(); // 기타
         }
+    }
+
+    /* =========================
+       🔥 하위 카테고리 매핑
+    ========================= */
+
+    private int mapSubCategoryNameToId(String name) {
+
+        return switch (name) {
+            case "택시" -> 5;
+            case "지하철" -> 4;
+            case "버스" -> 3;
+            case "외식" -> 1;
+            case "카페" -> 2;
+            case "마트" -> 6;
+            case "쇼핑" -> 7;
+            case "통신비" -> 8;
+            case "공과금" -> 9;
+            default -> getDefaultSubCategoryId(); // 기타
+        };
+    }
+
+    private int getDefaultSubCategoryId() {
+        return 10; // 기타
     }
 }

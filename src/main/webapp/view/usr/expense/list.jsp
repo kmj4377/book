@@ -46,7 +46,7 @@
                     <tr>
                         <td>${ex.id}</td>
                         <td>${ex.expenseDate}</td>
-                        <td>${ex.category}</td>
+                        <td>${ex.mainCategoryName} - ${ex.subCategoryName}</td>
 
                         <!-- 금액 천단위 콤마 적용 -->
                         <td>

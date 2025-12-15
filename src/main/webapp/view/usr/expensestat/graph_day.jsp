@@ -1,7 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<h3>일자별 지출</h3>
 <canvas id="dayChart"></canvas>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

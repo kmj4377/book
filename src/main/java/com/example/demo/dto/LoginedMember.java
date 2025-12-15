@@ -13,6 +13,7 @@ public class LoginedMember {
     private int authLevel;
     private String name;
     private String loginId;
+    private String nickname;
 
     // 소셜 로그인 식별자
     private Long kakaoId;
@@ -24,6 +25,7 @@ public class LoginedMember {
         this.id = member.getId();
         this.authLevel = member.getAuthLevel();
         this.name = member.getName();
+        this.nickname = member.getNickname();
         this.loginId = member.getLoginId();
         this.kakaoId = member.getKakaoId();
         this.naverId = member.getNaverId();
