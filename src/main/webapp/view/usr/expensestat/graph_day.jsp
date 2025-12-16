@@ -1,19 +1,17 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <canvas id="dayChart"></canvas>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    // day_labels : 일자
     const day_labels = [
         <c:forEach var="d" items="${dailyStats}">
             "${d.day}",
         </c:forEach>
     ];
 
-    // day_values : 지출 금액
     const day_values = [
         <c:forEach var="d" items="${dailyStats}">
             ${d.total},

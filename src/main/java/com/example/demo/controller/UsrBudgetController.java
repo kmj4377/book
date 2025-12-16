@@ -17,50 +17,47 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("/usr/budget")
 public class UsrBudgetController {
 
-    @Autowired
-    private BudgetService budgetService;
+	@Autowired
+	private BudgetService budgetService;
 
-    @RequestMapping("/set")
-    public String showSetBudget(HttpServletRequest req, Model model, String month) {
+	@RequestMapping("/set")
+	public String showSetBudget(HttpServletRequest req, Model model, String month) {
 
-        LoginedMember loginedMember =
-                (LoginedMember) req.getSession().getAttribute("loginedMember");
+		LoginedMember loginedMember = (LoginedMember) req.getSession().getAttribute("loginedMember");
 
-        if (loginedMember == null) {
-            return Util.jsHistoryBack("로그인 후 이용해주세요.");
-        }
+		if (loginedMember == null) {
+			return Util.jsHistoryBack("로그인 후 이용해주세요.");
+		}
 
-        int memberId = loginedMember.getId();
+		int memberId = loginedMember.getId();
 
-        if (month == null || month.isEmpty()) {
-            month = Util.getYearMonth();  // "yyyy-MM"
-        }
+		if (month == null || month.isEmpty()) {
+			month = Util.getYearMonth(); // "yyyy-MM"
+		}
 
-        Budget budget = budgetService.getBudget(memberId, month);
+		Budget budget = budgetService.getBudget(memberId, month);
 
-        model.addAttribute("budget", budget);
-        model.addAttribute("loginedMember", loginedMember);
-        model.addAttribute("month", month);
+		model.addAttribute("budget", budget);
+		model.addAttribute("loginedMember", loginedMember);
+		model.addAttribute("month", month);
 
-        return "usr/budget/set";
-    }
+		return "usr/budget/set";
+	}
 
-    @RequestMapping("/doSet")
-    @ResponseBody
-    public String doSet(HttpServletRequest req, String month, int amount) {
+	@RequestMapping("/doSet")
+	@ResponseBody
+	public String doSet(HttpServletRequest req, String month, int amount) {
 
-        LoginedMember loginedMember =
-                (LoginedMember) req.getSession().getAttribute("loginedMember");
+		LoginedMember loginedMember = (LoginedMember) req.getSession().getAttribute("loginedMember");
 
-        if (loginedMember == null) {
-            return Util.jsHistoryBack("로그인 후 이용해주세요.");
-        }
+		if (loginedMember == null) {
+			return Util.jsHistoryBack("로그인 후 이용해주세요.");
+		}
 
-        int memberId = loginedMember.getId();
+		int memberId = loginedMember.getId();
 
-        // 사용자가 선택한 month 그대로 저장!
-        budgetService.setBudget(memberId, month, amount);
+		budgetService.setBudget(memberId, month, amount);
 
-        return Util.jsReplace("예산이 설정되었습니다.", "/usr/budget/set?month=" + month);
-    }
+		return Util.jsReplace("예산이 설정되었습니다.", "/usr/budget/set?month=" + month);
+	}
 }

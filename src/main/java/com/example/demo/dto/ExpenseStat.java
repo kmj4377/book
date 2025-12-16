@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExpenseStat {
-    private String month;   
-    private int total;      
+	private String month;
+	private int total;
 }

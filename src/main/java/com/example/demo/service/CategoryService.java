@@ -13,22 +13,37 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoryService {
 
-    private final CategorySubDao categorySubDao;
+	private final CategorySubDao categorySubDao;
 
-    public Integer findSubCategoryIdByKeyword(String memo) {
-        if (memo == null || memo.isBlank()) return null;
+	public Integer findSubCategoryIdByKeyword(String memo) {
+		if (memo == null || memo.isBlank())
+			return null;
 
-        List<CategorySub> subs = categorySubDao.getAll();
+		List<CategorySub> subs = categorySubDao.getAll();
 
-        for (CategorySub sub : subs) {
-            String[] keywords = sub.getAiKeyword().split(",");
+		int maxScore = 0;
+		Integer bestSubId = null;
 
-            for (String keyword : keywords) {
-                if (memo.contains(keyword.trim())) {
-                    return sub.getId();
-                }
-            }
-        }
-        return null;
-    }
+		for (CategorySub sub : subs) {
+			int score = 0;
+
+			if (sub.getAiKeyword() == null)
+				continue;
+
+			String[] keywords = sub.getAiKeyword().split(",");
+
+			for (String keyword : keywords) {
+				if (memo.contains(keyword.trim())) {
+					score++;
+				}
+			}
+
+			if (score > maxScore) {
+				maxScore = score;
+				bestSubId = sub.getId();
+			}
+		}
+
+		return bestSubId;
+	}
 }

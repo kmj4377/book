@@ -1,37 +1,48 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<c:set var="pageTitle" value="회원가입"/>
-<%@ include file="/view/usr/common/header.jsp" %>
+<c:set var="pageTitle" value="회원가입" />
+<%@ include file="/view/usr/common/header.jsp"%>
 
 <style>
-    body { margin: 0; padding: 0; }
-    .join-wrapper {
-        width: 100%;
-        height: calc(100vh - 80px);
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        padding-top: 40px;
-        box-sizing: border-box;
-    }
-    .join-card {
-        width: 600px;
-        background: #f5e8d8;
-        padding: 35px 40px;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.18);
-    }
-    .join-title { font-size: 22px; font-weight: bold; margin-bottom: 18px; }
-    .input-row { margin-bottom: 14px; }
+body {
+	margin: 0;
+	padding: 0;
+}
+
+.join-wrapper {
+	width: 100%;
+	height: calc(100vh - 80px);
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	padding-top: 40px;
+	box-sizing: border-box;
+}
+
+.join-card {
+	width: 600px;
+	background: #f5e8d8;
+	padding: 35px 40px;
+	border-radius: 20px;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+}
+
+.join-title {
+	font-size: 22px;
+	font-weight: bold;
+	margin-bottom: 18px;
+}
+
+.input-row {
+	margin-bottom: 14px;
+}
 </style>
 
 <script>
 	let validLoginId = null;
 
-	/* -----------------------------------
-	   🔥 5분 타이머 
-	----------------------------------- */
 	let timerInterval = null;
 	let timeLeft = 300; 
 
@@ -70,9 +81,6 @@
 	    }, 1000);
 	}
 
-	/* -----------------------------------
-	   이메일 인증코드 발송
-	----------------------------------- */
 	function sendEmailCode() {
 	    let email = $('input[name=email]').val().trim();
 
@@ -106,9 +114,6 @@
 	    });
 	}
 
-	/* -----------------------------------
-	   이메일 인증 코드 확인
-	----------------------------------- */
 	function checkEmailCode() {
 	    let email = $('input[name=email]').val().trim();
 	    let code = $('#emailCode').val().trim();
@@ -126,10 +131,6 @@
 	        data: { email: email, code: code },
 	        success: function(data) {
 
-	            /* ⭐ 서버 응답 구조
-	               S-1 → 성공
-	               F-1 / F-2 / F-3 → 실패 (메시지 포함)
-	            */
 
 	            if (data.rsCode.startsWith("S")) {
 
@@ -144,12 +145,10 @@
 	                return;
 	            }
 
-	            // 실패 처리
 	            $('#emailTimerMsg')
 	                .css("color","red")
 	                .text(data.rsMsg);
 
-	            // 2초 후 타이머로 복귀
 	            setTimeout(() => {
 	                if (timerInterval !== null) {
 	                    let min = Math.floor(timeLeft / 60);
@@ -265,88 +264,83 @@
 
 
 <div class="join-wrapper">
-<div class="join-card">
+	<div class="join-card">
 
-    <div class="join-title">회원가입</div>
+		<div class="join-title">회원가입</div>
 
-    <form action="/usr/member/doJoin" method="post" onsubmit="return joinFormSubmit(this);">
+		<form action="/usr/member/doJoin" method="post"
+			onsubmit="return joinFormSubmit(this);">
 
-        <!-- 아이디 -->
-        <div class="input-row">
-            <label>아이디</label>
-            <input class="input input-neutral w-full"
-                   name="loginId"
-                   type="text"
-                   onblur="loginIdDupChk(this);" />
-            <div id="chkMsg" class="text-red-500 text-sm mt-1"></div>
-        </div>
+			<!-- 아이디 -->
+			<div class="input-row">
+				<label>아이디</label> <input class="input input-neutral w-full"
+					name="loginId" type="text" onblur="loginIdDupChk(this);" />
+				<div id="chkMsg" class="text-red-500 text-sm mt-1"></div>
+			</div>
 
-        <!-- 비밀번호 -->
-        <div class="input-row">
-            <label>비밀번호</label>
-            <input class="input input-neutral w-full" name="loginPw" type="password" />
-            <div id="pwMsg" class="text-red-500 text-sm mt-1"></div>
-        </div>
+			<!-- 비밀번호 -->
+			<div class="input-row">
+				<label>비밀번호</label> <input class="input input-neutral w-full"
+					name="loginPw" type="password" />
+				<div id="pwMsg" class="text-red-500 text-sm mt-1"></div>
+			</div>
 
-        <!-- 비밀번호 확인 -->
-        <div class="input-row">
-            <label>비밀번호 확인</label>
-            <input class="input input-neutral w-full" name="loginPwChk" type="password" />
-            <div id="pwChkMsg" class="text-red-500 text-sm mt-1"></div>
-        </div>
+			<!-- 비밀번호 확인 -->
+			<div class="input-row">
+				<label>비밀번호 확인</label> <input class="input input-neutral w-full"
+					name="loginPwChk" type="password" />
+				<div id="pwChkMsg" class="text-red-500 text-sm mt-1"></div>
+			</div>
 
-        <!-- 이름 -->
-        <div class="input-row">
-            <label>이름</label>
-            <input class="input input-neutral w-full" name="name" type="text" />
-            <div id="nameMsg" class="text-red-500 text-sm mt-1"></div>
-        </div>
+			<!-- 이름 -->
+			<div class="input-row">
+				<label>이름</label> <input class="input input-neutral w-full"
+					name="name" type="text" />
+				<div id="nameMsg" class="text-red-500 text-sm mt-1"></div>
+			</div>
 
-        <!-- 닉네임 -->
-        <div class="input-row">
-            <label>닉네임</label>
-            <input class="input input-neutral w-full" name="nickname" type="text" />
-            <div id="nicknameMsg" class="text-red-500 text-sm mt-1"></div>
-        </div>
+			<!-- 닉네임 -->
+			<div class="input-row">
+				<label>닉네임</label> <input class="input input-neutral w-full"
+					name="nickname" type="text" />
+				<div id="nicknameMsg" class="text-red-500 text-sm mt-1"></div>
+			</div>
 
-        <!-- 이메일 -->
-        <div class="input-row">
-            <label>이메일</label>
+			<!-- 이메일 -->
+			<div class="input-row">
+				<label>이메일</label>
 
-            <div class="flex gap-2">
-                <input class="input input-neutral flex-1"
-                       name="email"
-                       type="text"
-                       placeholder="example@gmail.com">
+				<div class="flex gap-2">
+					<input class="input input-neutral flex-1" name="email" type="text"
+						placeholder="example@gmail.com">
 
-                <button type="button" class="btn btn-neutral btn-sm"
-                        onclick="sendEmailCode()">인증코드 발송</button>
-            </div>
+					<button type="button" class="btn btn-neutral btn-sm"
+						onclick="sendEmailCode()">인증코드 발송</button>
+				</div>
 
-            <!-- 인증코드 입력 -->
-            <div id="emailCodeBox" class="mt-2 flex gap-2" style="display:none;">
-                <input id="emailCode" class="input input-neutral flex-1"
-                       type="text" placeholder="인증코드 입력" />
-                <button type="button" class="btn btn-neutral btn-sm"
-                        onclick="checkEmailCode()">확인</button>
-            </div>
+				<!-- 인증코드 입력 -->
+				<div id="emailCodeBox" class="mt-2 flex gap-2"
+					style="display: none;">
+					<input id="emailCode" class="input input-neutral flex-1"
+						type="text" placeholder="인증코드 입력" />
+					<button type="button" class="btn btn-neutral btn-sm"
+						onclick="checkEmailCode()">확인</button>
+				</div>
 
-            <div id="emailTimerMsg" class="text-red-500 text-sm mt-2"></div>
-        </div>
+				<div id="emailTimerMsg" class="text-red-500 text-sm mt-2"></div>
+			</div>
 
-        <input type="hidden" id="emailAuthed" name="emailAuthed" value="0">
+			<input type="hidden" id="emailAuthed" name="emailAuthed" value="0">
 
-        <!-- 가입 버튼 -->
-        <button class="btn btn-neutral btn-wide mt-4">가입</button>
-    </form>
+			<!-- 가입 버튼 -->
+			<button class="btn btn-neutral btn-wide mt-4">가입</button>
+		</form>
 
-    <!-- 뒤로가기 -->
-    <button class="btn btn-neutral btn-outline w-full mt-4"
-            onclick="location.href='/usr/welcome/index';">
-        뒤로가기
-    </button>
+		<!-- 뒤로가기 -->
+		<button class="btn btn-neutral btn-outline w-full mt-4"
+			onclick="location.href='/usr/welcome/index';">뒤로가기</button>
 
-</div>
+	</div>
 </div>
 
-<%@ include file="/view/usr/common/footer.jsp" %>
+<%@ include file="/view/usr/common/footer.jsp"%>

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DailyStat {
-    private int day;
-    private int total;
+	private int day;
+	private int total;
 }
-

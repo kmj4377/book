@@ -10,10 +10,10 @@ import com.example.demo.dto.CategorySub;
 @Mapper
 public interface CategorySubDao {
 
-    @Select("""
-        SELECT id, aiKeyword
-        FROM category_sub
-        WHERE aiKeyword IS NOT NULL
-    """)
-    List<CategorySub> getAll();
+	@Select("""
+			    SELECT id, aiKeyword
+			    FROM category_sub
+			    WHERE aiKeyword IS NOT NULL
+			""")
+	List<CategorySub> getAll();
 }

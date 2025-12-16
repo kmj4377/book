@@ -21,29 +21,25 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/usr/expense")
 public class UsrCalendarController {
 
-    private final CalendarService calendarService;
-    private final Req req;
+	private final CalendarService calendarService;
+	private final Req req;
 
-    @GetMapping("/calendar")
-    public String showCalendar(
-            @RequestParam(required = false) Integer year,
-            @RequestParam(required = false) Integer month,
-            HttpSession session,
-            Model model
-    ) {
+	@GetMapping("/calendar")
+	public String showCalendar(@RequestParam(required = false) Integer year,
+			@RequestParam(required = false) Integer month, HttpSession session, Model model) {
 
-        LocalDate now = LocalDate.now();
-        if (year == null || month == null) {
-            year = now.getYear();
-            month = now.getMonthValue();
-        }
+		LocalDate now = LocalDate.now();
+		if (year == null || month == null) {
+			year = now.getYear();
+			month = now.getMonthValue();
+		}
 
-        LoginedMember loginedMember = (LoginedMember) session.getAttribute("loginedMember");
-        int memberId = (loginedMember != null) ? loginedMember.getId() : 0;
+		LoginedMember loginedMember = (LoginedMember) session.getAttribute("loginedMember");
+		int memberId = (loginedMember != null) ? loginedMember.getId() : 0;
 
-        CalendarResult calendar = calendarService.getCalendar(memberId, year, month);
+		CalendarResult calendar = calendarService.getCalendar(memberId, year, month);
 
-        model.addAttribute("calendar", calendar);
-        return "usr/expense/calendar";
-    }
+		model.addAttribute("calendar", calendar);
+		return "usr/expense/calendar";
+	}
 }

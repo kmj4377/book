@@ -10,64 +10,43 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface BudgetStatDao {
 
-    /* ============================================================
-     * 1) 특정 월 예산 조회
-     * ============================================================ */
-    @Select("""
-        SELECT amount
-        FROM budget
-        WHERE memberId = #{memberId}
-          AND `month` = #{month}
-    """)
-    Integer getBudget(
-            @Param("memberId") int memberId,
-            @Param("month") String month);
+	@Select("""
+			    SELECT amount
+			    FROM budget
+			    WHERE memberId = #{memberId}
+			      AND `month` = #{month}
+			""")
+	Integer getBudget(@Param("memberId") int memberId, @Param("month") String month);
 
+	@Select("""
+			    SELECT COALESCE(SUM(amount), 0)
+			    FROM expense
+			    WHERE memberId = #{memberId}
+			      AND expenseDate LIKE CONCAT(#{month}, '%')
+			""")
+	int getTotalExpenseOfMonth(@Param("memberId") int memberId, @Param("month") String month);
 
-    /* ============================================================
-     * 2) 특정 월 지출 총합
-     * ============================================================ */
-    @Select("""
-        SELECT COALESCE(SUM(amount), 0)
-        FROM expense
-        WHERE memberId = #{memberId}
-          AND expenseDate LIKE CONCAT(#{month}, '%')
-    """)
-    int getTotalExpenseOfMonth(
-            @Param("memberId") int memberId,
-            @Param("month") String month);
+	@Select("""
+			    SELECT
+			        LPAD(SUBSTRING(`month`, 6, 2), 2, '0') AS month,
+			        amount
+			    FROM budget
+			    WHERE memberId = #{memberId}
+			      AND SUBSTRING(`month`, 1, 4) = #{year}
+			    ORDER BY month
+			""")
+	List<Map<String, Object>> getBudgetByYear(@Param("memberId") int memberId, @Param("year") int year);
 
-
-    /* ============================================================
-     * 3) 특정 연도 전체(1~12월) 예산 + 지출 조회
-     *    → 월별 예산 대비 지출 그래프에서 사용됨
-     * ============================================================ */
-    @Select("""
-        SELECT 
-            LPAD(SUBSTRING(`month`, 6, 2), 2, '0') AS month,
-            amount
-        FROM budget
-        WHERE memberId = #{memberId}
-          AND SUBSTRING(`month`, 1, 4) = #{year}
-        ORDER BY month
-    """)
-    List<Map<String, Object>> getBudgetByYear(
-            @Param("memberId") int memberId,
-            @Param("year") int year);
-
-
-    @Select("""
-        SELECT 
-            LPAD(SUBSTRING(expenseDate, 6, 2), 2, '0') AS month,
-            SUM(amount) AS total
-        FROM expense
-        WHERE memberId = #{memberId}
-          AND SUBSTRING(expenseDate, 1, 4) = #{year}
-        GROUP BY month
-        ORDER BY month
-    """)
-    List<Map<String, Object>> getExpenseByYear(
-            @Param("memberId") int memberId,
-            @Param("year") int year);
+	@Select("""
+			    SELECT
+			        LPAD(SUBSTRING(expenseDate, 6, 2), 2, '0') AS month,
+			        SUM(amount) AS total
+			    FROM expense
+			    WHERE memberId = #{memberId}
+			      AND SUBSTRING(expenseDate, 1, 4) = #{year}
+			    GROUP BY month
+			    ORDER BY month
+			""")
+	List<Map<String, Object>> getExpenseByYear(@Param("memberId") int memberId, @Param("year") int year);
 
 }

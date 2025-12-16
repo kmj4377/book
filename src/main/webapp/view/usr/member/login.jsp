@@ -38,7 +38,6 @@
 <section class="login-container">
     <div class="login-box">
 
-        <!-- 일반 로그인 -->
         <form action="/usr/member/doLogin" method="post" onsubmit="return loginFormSubmit(this);">
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">로그인</legend>
@@ -53,30 +52,25 @@
             </fieldset>
         </form>
 
-		<!-- 카카오 로그인 -->
 		<a href="${kakaoLoginUrl}" class="kakao-btn-wrapper social-btn">
 		    <img src="/img/kakao_login.png" alt="카카오 로그인">
 		</a>
 
-        <!-- 네이버 로그인 -->
         <a href="${naverLoginUrl}" class="naver-btn">
 		    <img src="/img/naver-icon.png" class="naver-icon">
 		    <span class="naver-text">네이버 로그인</span>
 		</a>
 
-        <!-- 구글 로그인 -->
         <a href="${googleLoginUrl}" class="google-login-btn">
             <img src="/img/google-icon.png" class="google-icon">
             <span>Google 계정으로 계속하기</span>
         </a>
 
-        <!-- 회원가입 -->
         <div class="mt-4 text-center">
             <span>계정이 없으신가요? </span>
             <a href="/usr/member/join" class="btn btn-sm btn-outline">회원가입</a>
         </div>
 
-        <!-- 뒤로가기 -->
         <div class="mt-2 text-center">
             <button class="btn btn-xs btn-outline" onclick="history.back();">뒤로가기</button>
         </div>

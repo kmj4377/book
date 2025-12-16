@@ -1,13 +1,13 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 
 <div class="px-6 pt-4 max-w-4xl mx-auto">
 
 
-    <div class="bg-white rounded-lg shadow p-4">
-        <canvas id="monthlyTrendChart" height="120"></canvas>
-    </div>
+	<div class="bg-white rounded-lg shadow p-4">
+		<canvas id="monthlyTrendChart" height="120"></canvas>
+	</div>
 
 </div>
 

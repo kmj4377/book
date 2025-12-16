@@ -4,7 +4,6 @@
 <jsp:include page="/view/usr/common/header.jsp" />
 
 <style>
-/* number 스피너 제거 */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -14,7 +13,6 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
-/* 에러 스타일 */
 .input-error {
     border-color: #ef4444 !important;
 }
@@ -35,7 +33,6 @@ input[type=number] {
 
         <input type="hidden" name="id" value="${expense.id}" />
 
-        <!-- 금액 -->
         <label class="form-control">
             <span class="label-text">금액</span>
             <input type="number"
@@ -49,7 +46,6 @@ input[type=number] {
             </p>
         </label>
 
-        <!-- 카테고리 -->
         <label class="form-control">
             <span class="label-text">카테고리</span>
             <select name="subCategoryId" class="select select-bordered w-full">
@@ -62,7 +58,6 @@ input[type=number] {
             </select>
         </label>
 
-        <!-- 날짜 -->
         <label class="form-control">
             <span class="label-text">날짜</span>
             <input type="date"
@@ -71,7 +66,6 @@ input[type=number] {
                    class="input input-bordered w-full" />
         </label>
 
-        <!-- 메모 -->
         <label class="form-control">
             <span class="label-text">메모</span>
             <textarea name="memo"

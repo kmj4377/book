@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MonthlySummary {
-    private long totalIncome;
-    private long totalExpense;
-    private long totalSaving;
+	private long totalIncome;
+	private long totalExpense;
+	private long totalSaving;
 }

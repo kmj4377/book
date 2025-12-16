@@ -27,151 +27,141 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CalendarService {
 
-    private final ExpenseDao expenseDao;
+	private final ExpenseDao expenseDao;
 
-    private final String SERVICE_KEY = "ad44d697b230a7e5e71014a1179bddda3b8ce502d8f78f908015aa2a830878e2";
+	private final String SERVICE_KEY = "ad44d697b230a7e5e71014a1179bddda3b8ce502d8f78f908015aa2a830878e2";
 
-    private Map<String, String> getHolidays(int year, int month) {
+	private Map<String, String> getHolidays(int year, int month) {
 
-        Map<String, String> holidays = new HashMap<>();
+		Map<String, String> holidays = new HashMap<>();
 
-        try {
-            StringBuilder urlBuilder = new StringBuilder(
-                    "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo"
-            );
-            urlBuilder.append("?" + "ServiceKey=" + SERVICE_KEY);
-            urlBuilder.append("&solYear=" + year);
-            urlBuilder.append("&solMonth=" + String.format("%02d", month));
-            urlBuilder.append("&_type=json");
+		try {
+			StringBuilder urlBuilder = new StringBuilder(
+					"https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo");
+			urlBuilder.append("?" + "ServiceKey=" + SERVICE_KEY);
+			urlBuilder.append("&solYear=" + year);
+			urlBuilder.append("&solMonth=" + String.format("%02d", month));
+			urlBuilder.append("&_type=json");
 
-            URL url = new URL(urlBuilder.toString());
-            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+			URL url = new URL(urlBuilder.toString());
+			BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
 
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(br);
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode root = mapper.readTree(br);
 
-            br.close();
+			br.close();
 
-            JsonNode items = root
-                    .path("response")
-                    .path("body")
-                    .path("items")
-                    .path("item");
+			JsonNode items = root.path("response").path("body").path("items").path("item");
 
-            if (!items.isArray()) return holidays;
+			if (!items.isArray())
+				return holidays;
 
-            for (JsonNode item : items) {
+			for (JsonNode item : items) {
 
-                String locdate = item.get("locdate").asText(); // 20250101
-                String dateName = item.get("dateName").asText();
+				String locdate = item.get("locdate").asText();
+				String dateName = item.get("dateName").asText();
 
-                String y = locdate.substring(0, 4);
-                String m = locdate.substring(4, 6);
-                String d = locdate.substring(6, 8);
+				String y = locdate.substring(0, 4);
+				String m = locdate.substring(4, 6);
+				String d = locdate.substring(6, 8);
 
-                holidays.put(y + "-" + m + "-" + d, dateName);
-            }
+				holidays.put(y + "-" + m + "-" + d, dateName);
+			}
 
-        } catch (Exception e) {
-            System.out.println("공휴일 API 오류: " + e.getMessage());
-        }
+		} catch (Exception e) {
+			System.out.println("공휴일 API 오류: " + e.getMessage());
+		}
 
-        return holidays;
-    }
+		return holidays;
+	}
 
+	private String getTagValue(String tag, Element e) {
+		NodeList nl = e.getElementsByTagName(tag).item(0).getChildNodes();
+		Node nValue = nl.item(0);
+		return nValue != null ? nValue.getNodeValue() : null;
+	}
 
+	public CalendarResult getCalendar(int memberId, Integer year, Integer month) {
 
+		LocalDate now = LocalDate.now();
+		if (year == null || month == null) {
+			year = now.getYear();
+			month = now.getMonthValue();
+		}
 
-    private String getTagValue(String tag, Element e) {
-        NodeList nl = e.getElementsByTagName(tag).item(0).getChildNodes();
-        Node nValue = nl.item(0);
-        return nValue != null ? nValue.getNodeValue() : null;
-    }
+		YearMonth ym = YearMonth.of(year, month);
+		int lastDay = ym.lengthOfMonth();
 
+		int startWeekday = LocalDate.of(year, month, 1).getDayOfWeek().getValue();
+		if (startWeekday == 7)
+			startWeekday = 0;
 
-    public CalendarResult getCalendar(int memberId, Integer year, Integer month) {
+		List<Map<String, Object>> dailyExpenses = expenseDao.getDailyExpenseByMonth(memberId, year, month);
 
-        LocalDate now = LocalDate.now();
-        if (year == null || month == null) {
-            year = now.getYear();
-            month = now.getMonthValue();
-        }
+		List<List<CalendarDay>> weeks = new ArrayList<>();
+		List<CalendarDay> currentWeek = new ArrayList<>();
 
-        YearMonth ym = YearMonth.of(year, month);
-        int lastDay = ym.lengthOfMonth();
+		Map<String, String> holidayMap = getHolidays(year, month);
 
-        int startWeekday = LocalDate.of(year, month, 1).getDayOfWeek().getValue();
-        if (startWeekday == 7) startWeekday = 0;
+		for (int i = 0; i < startWeekday; i++) {
+			currentWeek.add(CalendarDay.empty());
+		}
 
-        List<Map<String, Object>> dailyExpenses =
-                expenseDao.getDailyExpenseByMonth(memberId, year, month);
+		for (int day = 1; day <= lastDay; day++) {
 
-        List<List<CalendarDay>> weeks = new ArrayList<>();
-        List<CalendarDay> currentWeek = new ArrayList<>();
+			boolean isToday = (year == now.getYear() && month == now.getMonthValue() && day == now.getDayOfMonth());
 
-        Map<String, String> holidayMap = getHolidays(year, month);
+			int expense = getExpenseForDay(dailyExpenses, day);
 
-        for (int i = 0; i < startWeekday; i++) {
-            currentWeek.add(CalendarDay.empty());
-        }
+			CalendarDay cd = CalendarDay.of(day, isToday, expense);
 
-        for (int day = 1; day <= lastDay; day++) {
+			LocalDate d = LocalDate.of(year, month, day);
+			String key = d.toString();
 
-            boolean isToday = (year == now.getYear()
-                    && month == now.getMonthValue()
-                    && day == now.getDayOfMonth());
+			if (holidayMap.containsKey(key)) {
+				cd.setHoliday(true);
+				cd.setHolidayName(holidayMap.get(key));
+			}
 
-            int expense = getExpenseForDay(dailyExpenses, day);
+			currentWeek.add(cd);
 
-            CalendarDay cd = CalendarDay.of(day, isToday, expense);
+			if (currentWeek.size() == 7) {
+				weeks.add(currentWeek);
+				currentWeek = new ArrayList<>();
+			}
+		}
 
-            LocalDate d = LocalDate.of(year, month, day);
-            String key = d.toString();
+		if (!currentWeek.isEmpty()) {
+			while (currentWeek.size() < 7) {
+				currentWeek.add(CalendarDay.empty());
+			}
+			weeks.add(currentWeek);
+		}
 
-            if (holidayMap.containsKey(key)) {
-                cd.setHoliday(true);
-                cd.setHolidayName(holidayMap.get(key));
-            }
+		YearMonth prev = ym.minusMonths(1);
+		YearMonth next = ym.plusMonths(1);
 
-            currentWeek.add(cd);
+		CalendarResult result = new CalendarResult();
+		result.setYear(year);
+		result.setMonth(month);
+		result.setWeeks(weeks);
 
-            if (currentWeek.size() == 7) {
-                weeks.add(currentWeek);
-                currentWeek = new ArrayList<>();
-            }
-        }
+		result.setPrevYear(prev.getYear());
+		result.setPrevMonth(prev.getMonthValue());
+		result.setNextYear(next.getYear());
+		result.setNextMonth(next.getMonthValue());
 
-        if (!currentWeek.isEmpty()) {
-            while (currentWeek.size() < 7) {
-                currentWeek.add(CalendarDay.empty());
-            }
-            weeks.add(currentWeek);
-        }
+		return result;
+	}
 
-        YearMonth prev = ym.minusMonths(1);
-        YearMonth next = ym.plusMonths(1);
-
-        CalendarResult result = new CalendarResult();
-        result.setYear(year);
-        result.setMonth(month);
-        result.setWeeks(weeks);
-
-        result.setPrevYear(prev.getYear());
-        result.setPrevMonth(prev.getMonthValue());
-        result.setNextYear(next.getYear());
-        result.setNextMonth(next.getMonthValue());
-
-        return result;
-    }
-
-    private int getExpenseForDay(List<Map<String, Object>> list, int day) {
-        for (Map<String, Object> row : list) {
-            int d = Integer.parseInt(String.valueOf(row.get("day")));
-            if (d == day) {
-                Object amountObj = row.get("amount");
-                return amountObj == null ? 0 : Integer.parseInt(String.valueOf(amountObj));
-            }
-        }
-        return 0;
-    }
+	private int getExpenseForDay(List<Map<String, Object>> list, int day) {
+		for (Map<String, Object> row : list) {
+			int d = Integer.parseInt(String.valueOf(row.get("day")));
+			if (d == day) {
+				Object amountObj = row.get("amount");
+				return amountObj == null ? 0 : Integer.parseInt(String.valueOf(amountObj));
+			}
+		}
+		return 0;
+	}
 }

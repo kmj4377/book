@@ -4,8 +4,6 @@
 
 <jsp:include page="../common/header.jsp" />
 
-
-<!-- ✅ 비교 폼 전용 CSS -->
 <style>
 .compare-form {
     display: flex;
@@ -47,7 +45,6 @@
 
     <h2 class="text-xl font-bold mb-4">월별 지출 비교</h2>
 
-    <!-- 🔹 선택 폼 (가로 정렬) -->
     <form method="get"
       action="/usr/expensestat/compare"
       class="compare-form">
@@ -82,16 +79,15 @@
 </form>
 
 
-    <!-- 🔹 금액 요약 -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div class="bg-white p-4 shadow rounded text-center">
+        <div class="bg-[#f5e8d8] p-4 shadow rounded text-center">
             <div class="text-sm text-gray-500">${year1}년 ${month1}월</div>
             <div class="text-2xl font-bold">
                 <fmt:formatNumber value="${total1}" /> 원
             </div>
         </div>
 
-        <div class="bg-white p-4 shadow rounded text-center">
+        <div class="bg-[#f5e8d8] p-4 shadow rounded text-center">
             <div class="text-sm text-gray-500">${year2}년 ${month2}월</div>
             <div class="text-2xl font-bold">
                 <fmt:formatNumber value="${total2}" /> 원
@@ -99,8 +95,7 @@
         </div>
     </div>
 
-    <!-- 🔹 차이 -->
-    <div class="bg-white p-4 shadow rounded mb-6 text-center text-lg">
+    <div class="bg-[#f5e8d8] p-4 shadow rounded mb-6 text-center text-lg">
         <c:choose>
             <c:when test="${diff > 0}">
                 <span class="text-red-600">
@@ -120,19 +115,16 @@
         </c:choose>
     </div>
 
-    <!-- 🔹 그래프 카드 -->
     <div class="flex flex-wrap gap-6 w-full justify-center">
 
-        <!-- 막대 -->
-        <div class="p-6 bg-white rounded-2xl shadow-lg min-h-[450px] flex flex-col flex-1 min-w-[330px] max-w-[450px]">
+        <div class="p-6 bg-[#f5e8d8] rounded-2xl shadow-lg min-h-[450px] flex flex-col flex-1 min-w-[330px] max-w-[450px]">
             <h3 class="text-lg font-bold mb-4">지출 비교 그래프</h3>
             <div class="flex-1 relative">
                 <canvas id="barChart"></canvas>
             </div>
         </div>
 
-        <!-- TOP 3 -->
-        <div class="p-6 bg-white rounded-2xl shadow-lg min-h-[450px] flex flex-col flex-1 min-w-[330px] max-w-[450px]">
+        <div class="p-6 bg-[#f5e8d8] rounded-2xl shadow-lg min-h-[450px] flex flex-col flex-1 min-w-[330px] max-w-[450px]">
             <h3 class="text-lg font-bold mb-4">상위 3개 카테고리</h3>
 
             <div class="text-sm leading-6">
@@ -156,21 +148,32 @@
             </div>
         </div>
 
-        <!-- 도넛 -->
-        <div class="p-6 bg-white rounded-2xl shadow-lg min-h-[450px] flex flex-col flex-1 min-w-[330px] max-w-[450px]">
-            <h3 class="text-lg font-bold mb-4">소비 비중</h3>
-            <div class="flex-1 flex items-center justify-center gap-6">
-                <div class="w-[180px] h-[180px]">
-                    <canvas id="doughnutChart1"></canvas>
-                </div>
-                <div class="w-[180px] h-[180px]">
-                    <canvas id="doughnutChart2"></canvas>
-                </div>
+<div class="p-6 bg-[#f5e8d8] rounded-2xl shadow-lg min-h-[450px] flex flex-col flex-1 min-w-[330px] max-w-[450px]">
+    <h3 class="text-lg font-bold mb-4">소비 비중</h3>
+
+    <div class="flex-1 flex items-center justify-center gap-10">
+
+        <div class="flex flex-col items-center">
+            <div class="mb-2 text-sm font-semibold text-gray-600">
+                ${year1}년 ${month1}월
+            </div>
+            <div class="w-[180px] h-[180px]">
+                <canvas id="doughnutChart1"></canvas>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center">
+            <div class="mb-2 text-sm font-semibold text-gray-600">
+                ${year2}년 ${month2}월
+            </div>
+            <div class="w-[180px] h-[180px]">
+                <canvas id="doughnutChart2"></canvas>
             </div>
         </div>
 
     </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

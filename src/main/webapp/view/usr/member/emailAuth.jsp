@@ -1,39 +1,35 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<!-- =========================
-     기본 세팅 (null-safe)
-========================= -->
-<c:set var="pageTitle" value="이메일 인증"/>
+<c:set var="pageTitle" value="이메일 인증" />
 <c:set var="safeEmail" value="${empty email ? '' : email}" />
 
 <jsp:include page="../common/header.jsp" />
 
 <style>
-    .email-auth-wrapper {
-        display: flex;
-        justify-content: center;
-        margin-top: 40px;
-    }
-    .email-auth-card {
-        width: 420px;
-        background: #f5e8d8;
-        padding: 30px;
-        border-radius: 18px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.18);
-    }
-    .email-auth-title {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 20px;
-        text-align: center;
-    }
+.email-auth-wrapper {
+	display: flex;
+	justify-content: center;
+	margin-top: 40px;
+}
+
+.email-auth-card {
+	width: 420px;
+	background: #f5e8d8;
+	padding: 30px;
+	border-radius: 18px;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+}
+
+.email-auth-title {
+	font-size: 20px;
+	font-weight: bold;
+	margin-bottom: 20px;
+	text-align: center;
+}
 </style>
 
 <script>
-/* =========================
-   5분 타이머
-========================= */
 let timerInterval = null;
 let timeLeft = 300;
 
@@ -68,9 +64,6 @@ function startEmailTimer() {
     }, 1000);
 }
 
-/* =========================
-   인증코드 발송
-========================= */
 function sendEmailCode() {
 
     if ('${safeEmail}'.length === 0) {
@@ -113,9 +106,6 @@ function sendEmailCode() {
     });
 }
 
-/* =========================
-   인증코드 확인
-========================= */
 function checkEmailCode() {
 
     const code = $('#emailCode').val().trim();
@@ -146,7 +136,6 @@ function checkEmailCode() {
                     .css('color','green')
                     .text('이메일 인증이 완료되었습니다.');
 
-                // 잠깐 보여주고 이동
                 setTimeout(() => {
                     location.href = '/usr/member/mypage';
                 }, 800);
@@ -168,38 +157,28 @@ function checkEmailCode() {
 </script>
 
 <div class="email-auth-wrapper">
-    <div class="email-auth-card">
+	<div class="email-auth-card">
 
-        <div class="email-auth-title">이메일 인증</div>
+		<div class="email-auth-title">이메일 인증</div>
 
-        <p style="text-align:center; margin-bottom:16px;">
-            이메일: <b>${safeEmail}</b>
-        </p>
+		<p style="text-align: center; margin-bottom: 16px;">
+			이메일: <b>${safeEmail}</b>
+		</p>
 
-        <button class="btn btn-neutral w-full"
-                type="button"
-                onclick="sendEmailCode()">
-            인증코드 발송
-        </button>
+		<button class="btn btn-neutral w-full" type="button"
+			onclick="sendEmailCode()">인증코드 발송</button>
 
-        <!-- 인증코드 입력 영역 -->
-        <div id="emailCodeBox" style="display:none; margin-top:16px;">
-            <input id="emailCode"
-                   type="text"
-                   class="input input-neutral w-full"
-                   placeholder="인증코드 입력">
+		<div id="emailCodeBox" style="display: none; margin-top: 16px;">
+			<input id="emailCode" type="text" class="input input-neutral w-full"
+				placeholder="인증코드 입력">
 
-            <button class="btn btn-neutral w-full mt-2"
-                    type="button"
-                    onclick="checkEmailCode()">
-                확인
-            </button>
+			<button class="btn btn-neutral w-full mt-2" type="button"
+				onclick="checkEmailCode()">확인</button>
 
-            <!-- 메시지 / 타이머 -->
-            <div id="emailTimerMsg" class="text-sm mt-2"></div>
-        </div>
+			<div id="emailTimerMsg" class="text-sm mt-2"></div>
+		</div>
 
-    </div>
+	</div>
 </div>
 
 <jsp:include page="../common/footer.jsp" />

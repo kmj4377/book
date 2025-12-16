@@ -4,14 +4,14 @@ USE BOOK;
 
 
 CREATE TABLE expense (
-	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
-	, regDate DATETIME NOT NULL
-	, updateDate DATETIME NOT NULL
-	, subCategoryId INT NOT NULL
-	, memberId INT NOT NULL
-	, amount INT NOT NULL
-	, memo TEXT
-	, expenseDate DATE NOT NULL
+   id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
+   , regDate DATETIME NOT NULL
+   , updateDate DATETIME NOT NULL
+   , subCategoryId INT NOT NULL
+   , memberId INT NOT NULL
+   , amount INT NOT NULL
+   , memo TEXT
+   , expenseDate DATE NOT NULL
 );
 
 
@@ -64,7 +64,7 @@ CREATE TABLE category_sub (
 
 INSERT INTO `member`
 (id, regDate, updateDate, loginId, loginPw,NAME, nickname, email, authLevel)
-	VALUES
+   VALUES
 (1, NOW(), NOW(), 'test1', 'test1', '김호영', '호영', 'user1@test.com', 1),
 (2, NOW(), NOW(), 'test2', 'test2', '이서연', '서연', 'user2@test.com', 1),
 (3, NOW(), NOW(), 'test3', 'test3', '박지훈', '지훈', 'user3@test.com', 1),
@@ -72,25 +72,27 @@ INSERT INTO `member`
 (5, NOW(), NOW(), 'test5', 'test5', '정현우', '현우', 'user5@test.com', 1);
 
 INSERT INTO category_main (id, NAME, color, sortOrder)
-	VALUES
+   VALUES
 (1, '식비', '#FF6B8A', 1),
 (2, '교통', '#4EA5F5', 2),
 (3, '생활', '#69DB7C', 3),
 (4, '쇼핑', '#B197FC', 4),
 (5, '기타', '#FFA94D', 5);
 
-INSERT INTO category_sub (id, mainId, NAME, sortOrder, aiKeyword)
-	VALUES
-(1, 1, '외식', 1, '식당,밥,점심,저녁,배달'),
-(2, 1, '카페', 2, '카페,커피,스타벅스,라떼'),
-(3, 1, '마트', 3, '마트,이마트,홈플러스'),
-(4, 2, '대중교통', 1, '지하철,버스,교통'),
-(5, 2, '택시', 2, '택시,카카오택시'),
-(6, 3, '통신비', 1, '요금,통신,휴대폰'),
-(7, 3, '공과금', 2, '전기,수도,가스'),
-(8, 4, '의류', 1, '옷,의류,패션'),
-(9, 4, '온라인쇼핑', 2, '쿠팡,네이버,아마존'),
-(10, 5, '기타지출', 1, '기타');
+INSERT INTO category_sub (id, mainId, `NAME`, sortOrder, aiKeyword)
+VALUES
+
+(1, 1, '외식', 1, '식당,밥,점심,저녁,외식,회식,배달,김밥,라면'),
+(2, 1, '카페', 2, '카페,커피,아메리카노,라떼,스타벅스,투썸'),
+(3, 1, '마트', 3, '마트,이마트,홈플러스,장보기,식료품'),
+(4, 2, '대중교통', 1, '지하철,버스,교통,대중교통'),
+(5, 2, '택시', 2, '택시,카카오택시,우버'),
+(6, 3, '생활용품', 1, '생활,생활용품,세제,휴지,청소,청소용품,잡화'),
+(7, 3, '공과금', 2, '전기,수도,가스,공과금,관리비,요금'),
+(8, 4, '의류', 1, '옷,의류,패션,패딩,코트,반팔,신발,운동화,가방'),
+(9, 4, '온라인쇼핑', 2, '쿠팡,네이버,아마존,온라인쇼핑,배송'),
+(10, 5, '기타지출', 1, '기타,모임,연말,회식,여행,경비,선물');
+
 
 INSERT INTO budget (memberId, `month`, amount)
 VALUES
@@ -112,30 +114,359 @@ updateDate = NOW();
 
 INSERT INTO expense
 (regDate, updateDate, subCategoryId, memberId, amount, memo, expenseDate)
-	VALUES
-(NOW(), NOW(), 1, 1, 12000, '점심 외식', CURDATE()),
-(NOW(), NOW(), 2, 1, 4500, '아이스 아메리카노', CURDATE()),
-(NOW(), NOW(), 4, 1, 1350, '지하철 요금', CURDATE()),
-(NOW(), NOW(), 9, 1, 32000, '온라인 쇼핑', CURDATE() - INTERVAL 1 DAY),
-(NOW(), NOW(), 8, 1, 59000, '옷 구매', CURDATE() - INTERVAL 3 DAY),
-(NOW(), NOW(), 6, 1, 65000, '휴대폰 요금', CURDATE() - INTERVAL 5 DAY),
-(NOW(), NOW(), 7, 1, 42000, '전기요금', CURDATE() - INTERVAL 7 DAY),
-(NOW(), NOW(), 5, 1, 18000, '택시', CURDATE() - INTERVAL 10 DAY),
-(NOW(), NOW(), 3, 1, 54000, '마트 장보기', CURDATE() - INTERVAL 12 DAY),
-(NOW(), NOW(), 10, 1, 10000, '기타 지출', CURDATE() - INTERVAL 15 DAY);
+VALUES
 
-
+(NOW(), NOW(), 1, 1, 12000, '점심 식사', '2025-01-03'),
+(NOW(), NOW(), 2, 1, 1350, '버스', '2025-01-04'),
+(NOW(), NOW(), 3, 1, 28000, '생활용품', '2025-01-06'),
+(NOW(), NOW(), 4, 1, 59000, '겨울 옷', '2025-01-10'),
+(NOW(), NOW(), 5, 1, 15000, '기타 지출', '2025-01-15'),
+(NOW(), NOW(), 1, 1, 18000, '저녁 식사', '2025-01-20'),
+(NOW(), NOW(), 2, 1, 1450, '지하철', '2025-01-25'),
+(NOW(), NOW(), 3, 1, 12000, '세제', '2025-01-28'),
+(NOW(), NOW(), 1, 1, 11000, '김밥', '2025-02-02'),
+(NOW(), NOW(), 2, 1, 1500, '버스', '2025-02-04'),
+(NOW(), NOW(), 3, 1, 34000, '휴지', '2025-02-07'),
+(NOW(), NOW(), 4, 1, 89000, '신발', '2025-02-11'),
+(NOW(), NOW(), 5, 1, 20000, '선물', '2025-02-14'),
+(NOW(), NOW(), 1, 1, 22000, '외식', '2025-02-18'),
+(NOW(), NOW(), 2, 1, 1600, '지하철', '2025-02-22'),
+(NOW(), NOW(), 3, 1, 17000, '청소용품', '2025-02-26'),
+(NOW(), NOW(), 1, 1, 13000, '점심', '2025-03-01'),
+(NOW(), NOW(), 2, 1, 1400, '버스', '2025-03-03'),
+(NOW(), NOW(), 3, 1, 29000, '생활잡화', '2025-03-06'),
+(NOW(), NOW(), 4, 1, 65000, '가방', '2025-03-10'),
+(NOW(), NOW(), 5, 1, 10000, '기타', '2025-03-14'),
+(NOW(), NOW(), 1, 1, 21000, '저녁', '2025-03-18'),
+(NOW(), NOW(), 2, 1, 1550, '지하철', '2025-03-22'),
+(NOW(), NOW(), 3, 1, 18000, '세제', '2025-03-27'),
+(NOW(), NOW(), 1, 1, 12500, '점심', '2025-04-02'),
+(NOW(), NOW(), 2, 1, 1500, '버스', '2025-04-04'),
+(NOW(), NOW(), 3, 1, 36000, '생활용품', '2025-04-07'),
+(NOW(), NOW(), 4, 1, 72000, '봄 옷', '2025-04-11'),
+(NOW(), NOW(), 5, 1, 18000, '기타', '2025-04-15'),
+(NOW(), NOW(), 1, 1, 20000, '외식', '2025-04-19'),
+(NOW(), NOW(), 2, 1, 1450, '지하철', '2025-04-24'),
+(NOW(), NOW(), 3, 1, 15000, '휴지', '2025-04-28'),
+(NOW(), NOW(), 1, 1, 14000, '점심', '2025-05-03'),
+(NOW(), NOW(), 2, 1, 1600, '버스', '2025-05-05'),
+(NOW(), NOW(), 3, 1, 40000, '생활용품', '2025-05-08'),
+(NOW(), NOW(), 4, 1, 98000, '운동화', '2025-05-12'),
+(NOW(), NOW(), 5, 1, 22000, '기타', '2025-05-15'),
+(NOW(), NOW(), 1, 1, 23000, '외식', '2025-05-20'),
+(NOW(), NOW(), 2, 1, 1500, '지하철', '2025-05-24'),
+(NOW(), NOW(), 3, 1, 19000, '세제', '2025-05-29'),
+(NOW(), NOW(), 1, 1, 15000, '점심', '2025-06-02'),
+(NOW(), NOW(), 2, 1, 1550, '버스', '2025-06-04'),
+(NOW(), NOW(), 3, 1, 33000, '생활용품', '2025-06-07'),
+(NOW(), NOW(), 4, 1, 85000, '여름 옷', '2025-06-11'),
+(NOW(), NOW(), 5, 1, 30000, '기타', '2025-06-14'),
+(NOW(), NOW(), 1, 1, 26000, '외식', '2025-06-18'),
+(NOW(), NOW(), 2, 1, 1600, '지하철', '2025-06-23'),
+(NOW(), NOW(), 3, 1, 21000, '휴지', '2025-06-28'),
+(NOW(), NOW(), 1, 1, 16000, '점심', '2025-07-02'),
+(NOW(), NOW(), 2, 1, 1700, '버스', '2025-07-04'),
+(NOW(), NOW(), 3, 1, 35000, '생활용품', '2025-07-07'),
+(NOW(), NOW(), 4, 1, 120000, '여름 신발', '2025-07-10'),
+(NOW(), NOW(), 5, 1, 40000, '여행경비', '2025-07-15'),
+(NOW(), NOW(), 1, 1, 28000, '외식', '2025-07-20'),
+(NOW(), NOW(), 2, 1, 1600, '지하철', '2025-07-24'),
+(NOW(), NOW(), 3, 1, 22000, '세제', '2025-07-29'),
+(NOW(), NOW(), 1, 1, 17000, '점심', '2025-08-03'),
+(NOW(), NOW(), 2, 1, 1650, '버스', '2025-08-05'),
+(NOW(), NOW(), 3, 1, 38000, '생활용품', '2025-08-08'),
+(NOW(), NOW(), 4, 1, 99000, '반팔', '2025-08-12'),
+(NOW(), NOW(), 5, 1, 35000, '기타', '2025-08-16'),
+(NOW(), NOW(), 1, 1, 25000, '외식', '2025-08-20'),
+(NOW(), NOW(), 2, 1, 1700, '지하철', '2025-08-25'),
+(NOW(), NOW(), 3, 1, 24000, '청소용품', '2025-08-29'),
+(NOW(), NOW(), 1, 1, 15500, '점심', '2025-09-02'),
+(NOW(), NOW(), 2, 1, 1500, '버스', '2025-09-04'),
+(NOW(), NOW(), 3, 1, 32000, '생활용품', '2025-09-07'),
+(NOW(), NOW(), 4, 1, 87000, '가을 옷', '2025-09-11'),
+(NOW(), NOW(), 5, 1, 18000, '기타', '2025-09-15'),
+(NOW(), NOW(), 1, 1, 24000, '외식', '2025-09-20'),
+(NOW(), NOW(), 2, 1, 1550, '지하철', '2025-09-24'),
+(NOW(), NOW(), 3, 1, 21000, '휴지', '2025-09-28'),
+(NOW(), NOW(), 1, 1, 16000, '점심', '2025-10-03'),
+(NOW(), NOW(), 2, 1, 1500, '버스', '2025-10-05'),
+(NOW(), NOW(), 3, 1, 34000, '생활용품', '2025-10-08'),
+(NOW(), NOW(), 4, 1, 93000, '가을 신발', '2025-10-12'),
+(NOW(), NOW(), 5, 1, 20000, '기타', '2025-10-16'),
+(NOW(), NOW(), 1, 1, 26000, '외식', '2025-10-20'),
+(NOW(), NOW(), 2, 1, 1600, '지하철', '2025-10-25'),
+(NOW(), NOW(), 3, 1, 23000, '청소용품', '2025-10-29'),
+(NOW(), NOW(), 1, 1, 16500, '점심', '2025-11-02'),
+(NOW(), NOW(), 2, 1, 1500, '버스', '2025-11-04'),
+(NOW(), NOW(), 3, 1, 36000, '생활용품', '2025-11-07'),
+(NOW(), NOW(), 4, 1, 110000, '겨울 옷', '2025-11-11'),
+(NOW(), NOW(), 5, 1, 25000, '기타', '2025-11-15'),
+(NOW(), NOW(), 1, 1, 27000, '외식', '2025-11-20'),
+(NOW(), NOW(), 2, 1, 1600, '지하철', '2025-11-24'),
+(NOW(), NOW(), 3, 1, 24000, '세제', '2025-11-28'),
+(NOW(), NOW(), 1, 1, 18000, '점심', '2025-12-02'),
+(NOW(), NOW(), 2, 1, 1600, '버스', '2025-12-04'),
+(NOW(), NOW(), 3, 1, 38000, '생활용품', '2025-12-07'),
+(NOW(), NOW(), 4, 1, 150000, '패딩', '2025-12-10'),
+(NOW(), NOW(), 5, 1, 60000, '연말 모임', '2025-12-15'),
+(NOW(), NOW(), 1, 1, 30000, '외식', '2025-12-20'),
+(NOW(), NOW(), 2, 1, 1700, '지하철', '2025-12-24'),
+(NOW(), NOW(), 3, 1, 26000, '청소용품', '2025-12-28');
 
 
 SELECT *
-	FROM `member`;
-	
+   FROM `member`;
+   
 SELECT *
-	FROM expense;
-	
+   FROM expense;
+   
 SELECT *
-	FROM budget;
-		
+   FROM budget;
+      
 SELECT *
-	FROM category_main;
-	
+   FROM category_main;
+   
+SELECT *
+   FROM category_sub;
+   
+UPDATE expense e
+JOIN category_sub cs
+  ON e.memo REGEXP REPLACE(cs.aiKeyword, ',', '|')
+SET e.subCategoryId = cs.id;
+
+DROP DATABASE IF EXISTS BOOK;
+CREATE DATABASE BOOK;
+USE BOOK;
+
+
+CREATE TABLE expense (
+   id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
+   , regDate DATETIME NOT NULL
+   , updateDate DATETIME NOT NULL
+   , subCategoryId INT NOT NULL
+   , memberId INT NOT NULL
+   , amount INT NOT NULL
+   , memo TEXT
+   , expenseDate DATE NOT NULL
+);
+
+
+CREATE TABLE `member` (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    regDate DATETIME NOT NULL,
+    updateDate DATETIME NOT NULL,
+    last_login_at DATETIME NULL,
+    loginId VARCHAR(50) UNIQUE,
+    loginPw VARCHAR(100) NULL,
+    `name` VARCHAR(20) NOT NULL,
+    nickname VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    email_verified TINYINT(1) NOT NULL DEFAULT 0,
+    email_verified_at DATETIME NULL,
+    authLevel INT UNSIGNED NOT NULL DEFAULT 1,
+    kakao_id BIGINT UNIQUE,
+    naver_id VARCHAR(100) UNIQUE,
+    google_id VARCHAR(255) UNIQUE
+);
+
+
+CREATE TABLE budget (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    memberId INT NOT NULL,
+    `month` VARCHAR(7) NOT NULL,
+    amount INT NOT NULL,
+    regDate DATETIME NOT NULL DEFAULT NOW(),
+    updateDate DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+    UNIQUE KEY (memberId, `month`) 
+);
+
+CREATE TABLE category_main (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    NAME VARCHAR(50) NOT NULL,
+    color VARCHAR(20) NOT NULL,
+    sortOrder INT DEFAULT 0
+);
+
+CREATE TABLE category_sub (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    mainId INT NOT NULL,
+    NAME VARCHAR(50) NOT NULL,
+    sortOrder INT DEFAULT 0,
+    aiKeyword VARCHAR(255),
+    FOREIGN KEY (mainId) REFERENCES category_main(id)
+);
+
+
+
+INSERT INTO `member`
+(id, regDate, updateDate, loginId, loginPw,NAME, nickname, email, authLevel)
+   VALUES
+(1, NOW(), NOW(), 'test1', 'test1', '김호영', '호영', 'user1@test.com', 1),
+(2, NOW(), NOW(), 'test2', 'test2', '이서연', '서연', 'user2@test.com', 1),
+(3, NOW(), NOW(), 'test3', 'test3', '박지훈', '지훈', 'user3@test.com', 1),
+(4, NOW(), NOW(), 'test4', 'test4', '최유진', '유진', 'user4@test.com', 1),
+(5, NOW(), NOW(), 'test5', 'test5', '정현우', '현우', 'user5@test.com', 1);
+
+INSERT INTO category_main (id, NAME, color, sortOrder)
+   VALUES
+(1, '식비', '#FF6B8A', 1),
+(2, '교통', '#4EA5F5', 2),
+(3, '생활', '#69DB7C', 3),
+(4, '쇼핑', '#B197FC', 4),
+(5, '기타', '#FFA94D', 5);
+
+INSERT INTO category_sub (id, mainId, `NAME`, sortOrder, aiKeyword)
+VALUES
+
+(1, 1, '외식', 1, '식당,밥,점심,저녁,외식,회식,배달,김밥,라면'),
+(2, 1, '카페', 2, '카페,커피,아메리카노,라떼,스타벅스,투썸'),
+(3, 1, '마트', 3, '마트,이마트,홈플러스,장보기,식료품'),
+(4, 2, '대중교통', 1, '지하철,버스,교통,대중교통'),
+(5, 2, '택시', 2, '택시,카카오택시,우버'),
+(6, 3, '생활용품', 1, '생활,생활용품,세제,휴지,청소,청소용품,잡화'),
+(7, 3, '공과금', 2, '전기,수도,가스,공과금,관리비,요금'),
+(8, 4, '의류', 1, '옷,의류,패션,패딩,코트,반팔,신발,운동화,가방'),
+(9, 4, '온라인쇼핑', 2, '쿠팡,네이버,아마존,온라인쇼핑,배송'),
+(10, 5, '기타지출', 1, '기타,모임,연말,회식,여행,경비,선물');
+
+
+INSERT INTO budget (memberId, `month`, amount)
+VALUES
+(1, '2025-01', 980000),
+(1, '2025-02', 1000000),
+(1, '2025-03', 1020000),
+(1, '2025-04', 990000),
+(1, '2025-05', 1010000),
+(1, '2025-06', 1000000),
+(1, '2025-07', 980000),
+(1, '2025-08', 1000000),
+(1, '2025-09', 1020000),
+(1, '2025-10', 1010000),
+(1, '2025-11', 1080000),
+(1, '2025-12', 1200000)
+ON DUPLICATE KEY UPDATE
+amount = VALUES(amount),
+updateDate = NOW();
+
+INSERT INTO expense
+(regDate, updateDate, subCategoryId, memberId, amount, memo, expenseDate)
+VALUES
+
+(NOW(), NOW(), 1, 1, 12000, '점심 식사', '2025-01-03'),
+(NOW(), NOW(), 2, 1, 1350, '버스', '2025-01-04'),
+(NOW(), NOW(), 3, 1, 28000, '생활용품', '2025-01-06'),
+(NOW(), NOW(), 4, 1, 59000, '겨울 옷', '2025-01-10'),
+(NOW(), NOW(), 5, 1, 15000, '기타 지출', '2025-01-15'),
+(NOW(), NOW(), 1, 1, 18000, '저녁 식사', '2025-01-20'),
+(NOW(), NOW(), 2, 1, 1450, '지하철', '2025-01-25'),
+(NOW(), NOW(), 3, 1, 12000, '세제', '2025-01-28'),
+(NOW(), NOW(), 1, 1, 11000, '김밥', '2025-02-02'),
+(NOW(), NOW(), 2, 1, 1500, '버스', '2025-02-04'),
+(NOW(), NOW(), 3, 1, 34000, '휴지', '2025-02-07'),
+(NOW(), NOW(), 4, 1, 89000, '신발', '2025-02-11'),
+(NOW(), NOW(), 5, 1, 20000, '선물', '2025-02-14'),
+(NOW(), NOW(), 1, 1, 22000, '외식', '2025-02-18'),
+(NOW(), NOW(), 2, 1, 1600, '지하철', '2025-02-22'),
+(NOW(), NOW(), 3, 1, 17000, '청소용품', '2025-02-26'),
+(NOW(), NOW(), 1, 1, 13000, '점심', '2025-03-01'),
+(NOW(), NOW(), 2, 1, 1400, '버스', '2025-03-03'),
+(NOW(), NOW(), 3, 1, 29000, '생활잡화', '2025-03-06'),
+(NOW(), NOW(), 4, 1, 65000, '가방', '2025-03-10'),
+(NOW(), NOW(), 5, 1, 10000, '기타', '2025-03-14'),
+(NOW(), NOW(), 1, 1, 21000, '저녁', '2025-03-18'),
+(NOW(), NOW(), 2, 1, 1550, '지하철', '2025-03-22'),
+(NOW(), NOW(), 3, 1, 18000, '세제', '2025-03-27'),
+(NOW(), NOW(), 1, 1, 12500, '점심', '2025-04-02'),
+(NOW(), NOW(), 2, 1, 1500, '버스', '2025-04-04'),
+(NOW(), NOW(), 3, 1, 36000, '생활용품', '2025-04-07'),
+(NOW(), NOW(), 4, 1, 72000, '봄 옷', '2025-04-11'),
+(NOW(), NOW(), 5, 1, 18000, '기타', '2025-04-15'),
+(NOW(), NOW(), 1, 1, 20000, '외식', '2025-04-19'),
+(NOW(), NOW(), 2, 1, 1450, '지하철', '2025-04-24'),
+(NOW(), NOW(), 3, 1, 15000, '휴지', '2025-04-28'),
+(NOW(), NOW(), 1, 1, 14000, '점심', '2025-05-03'),
+(NOW(), NOW(), 2, 1, 1600, '버스', '2025-05-05'),
+(NOW(), NOW(), 3, 1, 40000, '생활용품', '2025-05-08'),
+(NOW(), NOW(), 4, 1, 98000, '운동화', '2025-05-12'),
+(NOW(), NOW(), 5, 1, 22000, '기타', '2025-05-15'),
+(NOW(), NOW(), 1, 1, 23000, '외식', '2025-05-20'),
+(NOW(), NOW(), 2, 1, 1500, '지하철', '2025-05-24'),
+(NOW(), NOW(), 3, 1, 19000, '세제', '2025-05-29'),
+(NOW(), NOW(), 1, 1, 15000, '점심', '2025-06-02'),
+(NOW(), NOW(), 2, 1, 1550, '버스', '2025-06-04'),
+(NOW(), NOW(), 3, 1, 33000, '생활용품', '2025-06-07'),
+(NOW(), NOW(), 4, 1, 85000, '여름 옷', '2025-06-11'),
+(NOW(), NOW(), 5, 1, 30000, '기타', '2025-06-14'),
+(NOW(), NOW(), 1, 1, 26000, '외식', '2025-06-18'),
+(NOW(), NOW(), 2, 1, 1600, '지하철', '2025-06-23'),
+(NOW(), NOW(), 3, 1, 21000, '휴지', '2025-06-28'),
+(NOW(), NOW(), 1, 1, 16000, '점심', '2025-07-02'),
+(NOW(), NOW(), 2, 1, 1700, '버스', '2025-07-04'),
+(NOW(), NOW(), 3, 1, 35000, '생활용품', '2025-07-07'),
+(NOW(), NOW(), 4, 1, 120000, '여름 신발', '2025-07-10'),
+(NOW(), NOW(), 5, 1, 40000, '여행경비', '2025-07-15'),
+(NOW(), NOW(), 1, 1, 28000, '외식', '2025-07-20'),
+(NOW(), NOW(), 2, 1, 1600, '지하철', '2025-07-24'),
+(NOW(), NOW(), 3, 1, 22000, '세제', '2025-07-29'),
+(NOW(), NOW(), 1, 1, 17000, '점심', '2025-08-03'),
+(NOW(), NOW(), 2, 1, 1650, '버스', '2025-08-05'),
+(NOW(), NOW(), 3, 1, 38000, '생활용품', '2025-08-08'),
+(NOW(), NOW(), 4, 1, 99000, '반팔', '2025-08-12'),
+(NOW(), NOW(), 5, 1, 35000, '기타', '2025-08-16'),
+(NOW(), NOW(), 1, 1, 25000, '외식', '2025-08-20'),
+(NOW(), NOW(), 2, 1, 1700, '지하철', '2025-08-25'),
+(NOW(), NOW(), 3, 1, 24000, '청소용품', '2025-08-29'),
+(NOW(), NOW(), 1, 1, 15500, '점심', '2025-09-02'),
+(NOW(), NOW(), 2, 1, 1500, '버스', '2025-09-04'),
+(NOW(), NOW(), 3, 1, 32000, '생활용품', '2025-09-07'),
+(NOW(), NOW(), 4, 1, 87000, '가을 옷', '2025-09-11'),
+(NOW(), NOW(), 5, 1, 18000, '기타', '2025-09-15'),
+(NOW(), NOW(), 1, 1, 24000, '외식', '2025-09-20'),
+(NOW(), NOW(), 2, 1, 1550, '지하철', '2025-09-24'),
+(NOW(), NOW(), 3, 1, 21000, '휴지', '2025-09-28'),
+(NOW(), NOW(), 1, 1, 16000, '점심', '2025-10-03'),
+(NOW(), NOW(), 2, 1, 1500, '버스', '2025-10-05'),
+(NOW(), NOW(), 3, 1, 34000, '생활용품', '2025-10-08'),
+(NOW(), NOW(), 4, 1, 93000, '가을 신발', '2025-10-12'),
+(NOW(), NOW(), 5, 1, 20000, '기타', '2025-10-16'),
+(NOW(), NOW(), 1, 1, 26000, '외식', '2025-10-20'),
+(NOW(), NOW(), 2, 1, 1600, '지하철', '2025-10-25'),
+(NOW(), NOW(), 3, 1, 23000, '청소용품', '2025-10-29'),
+(NOW(), NOW(), 1, 1, 16500, '점심', '2025-11-02'),
+(NOW(), NOW(), 2, 1, 1500, '버스', '2025-11-04'),
+(NOW(), NOW(), 3, 1, 36000, '생활용품', '2025-11-07'),
+(NOW(), NOW(), 4, 1, 110000, '겨울 옷', '2025-11-11'),
+(NOW(), NOW(), 5, 1, 25000, '기타', '2025-11-15'),
+(NOW(), NOW(), 1, 1, 27000, '외식', '2025-11-20'),
+(NOW(), NOW(), 2, 1, 1600, '지하철', '2025-11-24'),
+(NOW(), NOW(), 3, 1, 24000, '세제', '2025-11-28'),
+(NOW(), NOW(), 1, 1, 18000, '점심', '2025-12-02'),
+(NOW(), NOW(), 2, 1, 1600, '버스', '2025-12-04'),
+(NOW(), NOW(), 3, 1, 38000, '생활용품', '2025-12-07'),
+(NOW(), NOW(), 4, 1, 150000, '패딩', '2025-12-10'),
+(NOW(), NOW(), 5, 1, 60000, '연말 모임', '2025-12-15'),
+(NOW(), NOW(), 1, 1, 30000, '외식', '2025-12-20'),
+(NOW(), NOW(), 2, 1, 1700, '지하철', '2025-12-24'),
+(NOW(), NOW(), 3, 1, 26000, '청소용품', '2025-12-28');
+
+
+SELECT *
+   FROM `member`;
+   
+SELECT *
+   FROM expense;
+   
+SELECT *
+   FROM budget;
+      
+SELECT *
+   FROM category_main;
+   
+SELECT *
+   FROM category_sub;
+   
+UPDATE expense e
+JOIN category_sub cs
+  ON e.memo REGEXP REPLACE(cs.aiKeyword, ',', '|')
+SET e.subCategoryId = cs.id;
+

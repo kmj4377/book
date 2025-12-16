@@ -13,71 +13,66 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class Req {
 
-    private final HttpServletRequest req;
-    private final HttpServletResponse resp;
-    private final HttpSession session;
+	private final HttpServletRequest req;
+	private final HttpServletResponse resp;
+	private final HttpSession session;
 
-    public LoginedMember getLoginedMember() {
-        return (LoginedMember) session.getAttribute("loginedMember");
-    }
+	public LoginedMember getLoginedMember() {
+		return (LoginedMember) session.getAttribute("loginedMember");
+	}
 
-    public int getLoginedMemberId() {
-        LoginedMember member = getLoginedMember();
-        return member != null ? member.getId() : 0;
-    }
+	public int getLoginedMemberId() {
+		LoginedMember member = getLoginedMember();
+		return member != null ? member.getId() : 0;
+	}
 
-    public int getLoginedMemberAuthLevel() {
-        LoginedMember member = getLoginedMember();
-        return member != null ? member.getAuthLevel() : 0;
-    }
+	public int getLoginedMemberAuthLevel() {
+		LoginedMember member = getLoginedMember();
+		return member != null ? member.getAuthLevel() : 0;
+	}
 
-    public boolean isLogined() {
-        return getLoginedMember() != null;
-    }
+	public boolean isLogined() {
+		return getLoginedMember() != null;
+	}
 
-    public void login(LoginedMember member) {
-        session.setAttribute("loginedMember", member);
-        session.setAttribute("loginedMemberId", member.getId());
-        session.setAttribute("loginedMemberAuthLevel", member.getAuthLevel());
-    }
+	public void login(LoginedMember member) {
+		session.setAttribute("loginedMember", member);
+		session.setAttribute("loginedMemberId", member.getId());
+		session.setAttribute("loginedMemberAuthLevel", member.getAuthLevel());
+	}
 
-    public void logout() {
-        session.invalidate();
-    }
+	public void logout() {
+		session.invalidate();
+	}
 
-    // 🔥 alert 제거 버전: 메시지는 콘솔에만 출력
-    public String jsReplace(String msg, String uri) {
+	public String jsReplace(String msg, String uri) {
 
-        String safeMsg = msg == null ? "" : msg.replace("'", "\\'");
-        String safeUri = uri == null ? "/" : uri;
+		String safeMsg = msg == null ? "" : msg.replace("'", "\\'");
+		String safeUri = uri == null ? "/" : uri;
 
-        return """
-                <script>
-                    const _msg = '%s';
-                    if (_msg && _msg.length > 0) alert(_msg);
-                    location.replace('%s');
-                </script>
-                """.formatted(safeMsg, safeUri);
-    }
+		return """
+				<script>
+				    const _msg = '%s';
+				    if (_msg && _msg.length > 0) alert(_msg);
+				    location.replace('%s');
+				</script>
+				""".formatted(safeMsg, safeUri);
+	}
 
+	public String jsHistoryBack(String msg) {
 
-    public String jsHistoryBack(String msg) {
+		String safeMsg = msg == null ? "" : msg.replace("'", "\\'");
 
-        String safeMsg = msg == null ? "" : msg.replace("'", "\\'");
+		return """
+				<script>
+				    const _msg = '%s';
+				    if (_msg && _msg.length > 0) alert(_msg);
+				    history.back();
+				</script>
+				""".formatted(safeMsg);
+	}
 
-        return """
-                <script>
-                    const _msg = '%s';
-                    if (_msg && _msg.length > 0) alert(_msg);
-                    history.back();
-                </script>
-                """.formatted(safeMsg);
-    }
-
-
-
-
-    public String getParam(String name) {
-        return req.getParameter(name);
-    }
+	public String getParam(String name) {
+		return req.getParameter(name);
+	}
 }

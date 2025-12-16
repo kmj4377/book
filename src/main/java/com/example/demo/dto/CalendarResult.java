@@ -7,14 +7,14 @@ import lombok.Data;
 @Data
 public class CalendarResult {
 
-    private int year;
-    private int month;
+	private int year;
+	private int month;
 
-    private int prevYear;
-    private int prevMonth;
+	private int prevYear;
+	private int prevMonth;
 
-    private int nextYear;
-    private int nextMonth;
+	private int nextYear;
+	private int nextMonth;
 
-    private List<List<CalendarDay>> weeks;
+	private List<List<CalendarDay>> weeks;
 }
